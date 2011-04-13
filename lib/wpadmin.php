@@ -2,17 +2,12 @@
 
 class WpAdmin {
     
-    public static function parseUserInput ($input)
+    public static function init ($input)
 	{
-	    switch ($input[1]) {
-        case 'adduser':
-            self::_addWpUser();
-            break;
-        }
-
+	    self::$input[1]();
     }
     
-    private static function _addWpUser()
+    private static function adduser()
     {
         fwrite(STDOUT, "Username: ");
         $username = trim(fgets(STDIN));    

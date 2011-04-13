@@ -22,4 +22,4 @@ require_once WPADMIN_LIBS_PATH . '/wpadmin_user.php';
 
 require_once WPADMIN_LIBS_PATH . '/wpadmin.php';
 
-echo WpAdmin::parseUserInput($GLOBALS['argv']);
+echo WpAdmin::init($GLOBALS['argv']);
