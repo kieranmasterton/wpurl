@@ -12,11 +12,6 @@ class WpAdmin {
         }
     }
     
-    private static function _add()
-    {
-        echo "What would you like to add? \n";
-    }
-    
     private static function _add_user()
     {
         fwrite(STDOUT, "Username: ");
