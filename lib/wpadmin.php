@@ -2,7 +2,7 @@
 
 class WpAdmin {
     
-    public static function exec ($input)
+    public static function exec($input)
 	{
 	    $method = '_' . $input[1] . '_' . $input[2];
         if(method_exists(__CLASS__, $method)){
@@ -49,9 +49,33 @@ class WpAdmin {
         }
     }
     
+    private static function _user_role()
+    {
+        fwrite(STDOUT, "Username: ");
+        $username = trim(fgets(STDIN));
+        $user = get_user_by('login', $username);
+        fwrite(STDOUT, "Role (subscriber, author, editor, administrator): ");
+        $role = trim(fgets(STDIN));
+        
+        $wpadmin_user = new WpAdmin_User();
+        $result = $wpadmin_user->updateRole($user->ID, strtolower($role));
+            
+        if(TRUE == is_int($result)){
+            echo "-- User successfully updated.\n";
+        }
+    }
+    
     private static function _rm_user()
     {
        self::_delete_user();
+    }
+    
+    private static function _user_list()
+    {
+        $users = WpAdmin_User::all();
+        foreach($users as $k => $user){
+            echo $user->user_login . " - " . $user->user_email . "\n";
+        }
     }
     
     private static function _parseYesNo($response)
