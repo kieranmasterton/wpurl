@@ -1,13 +1,32 @@
 <?php
 
-require_once WPADMIN_LIBS_PATH . '/wpadmin_user.php';
-
-class Wpadmin {
+class WpAdmin {
     
-    public static function loadEnv ()
+    public static function parseUserInput ($input)
 	{
-		require_once( 'wp-load.php' );
-        require_once( ABSPATH . WPINC . '/template-loader.php' );
-	}
+	    switch ($input[1]) {
+        case 'adduser':
+            self::_addWpUser();
+            break;
+        }
+
+    }
+    
+    private static function _addWpUser()
+    {
+        fwrite(STDOUT, "Username: ");
+        $username = trim(fgets(STDIN));    
+        fwrite(STDOUT, "Password: ");
+        $password = trim(fgets(STDIN));
+        fwrite(STDOUT, "Email: ");
+        $email = trim(fgets(STDIN));
+
+        $wpadmin_user = new WpAdmin_User();
+        $result = $wpadmin_user->create($username, $password, $email);
+        
+        if(TRUE == is_int($result)){
+            echo "-- User successfully added.\n";
+        }
+    }
     
 }

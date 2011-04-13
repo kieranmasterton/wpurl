@@ -11,10 +11,15 @@
  */
 
 define('WPADMIN_BASE_PATH', dirname(__FILE__));
-define('WPADMIN_LIBS_PATH', dirname(__FILE__));
+define('WPADMIN_LIBS_PATH', dirname(__FILE__) . '/lib');
+
+# Load wordpress libs
+require_once( 'wp-load.php' );
+require_once( ABSPATH . WPINC . '/template-loader.php' );
+
+# Load wpdmin libs
+require_once WPADMIN_LIBS_PATH . '/wpadmin_user.php';
 
 require_once WPADMIN_LIBS_PATH . '/wpadmin.php';
 
-var_dump($wpdb);
-
-echo "hello world \n";
+echo WpAdmin::parseUserInput($GLOBALS['argv']);
