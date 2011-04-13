@@ -7,18 +7,26 @@
  *
  * @requires PHP CLI 5.2.0, or newer.
  */
+ 
+ob_start("strip_tags");
 
 define('WPADMIN_BASE_PATH', dirname(__FILE__));
 define('WPADMIN_LIBS_PATH', dirname(__FILE__) . '/lib');
 
-# Load wordpress libs
-require_once( 'wp-load.php' );
-require_once( ABSPATH . WPINC . '/template-loader.php' );
-require_once( ABSPATH . 'wp-admin/includes/admin.php');
+if(TRUE == is_readable('wp-load.php')){
+    # Load wordpress libs
+    require_once('wp-load.php');
+    require_once(ABSPATH . WPINC . '/template-loader.php');
+    require_once(ABSPATH . 'wp-admin/includes/admin.php');
 
-# Load wpdmin libs
-require_once WPADMIN_LIBS_PATH . '/wpadmin_user.php';
+    # Load wpdmin libs
+    require_once WPADMIN_LIBS_PATH . '/wpadmin_user.php';
 
-require_once WPADMIN_LIBS_PATH . '/wpadmin.php';
+    require_once WPADMIN_LIBS_PATH . '/wpadmin.php';
 
-WpAdmin::exec($GLOBALS['argv']);
+    WpAdmin::exec($GLOBALS['argv']);
+}else{
+    die("Either this is not a WordPress document root or you do not have permission to administer this site. \n");
+}
+
+ob_end_flush();
