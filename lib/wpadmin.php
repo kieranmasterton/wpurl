@@ -4,8 +4,12 @@ class WpAdmin {
     
     public static function exec ($input)
 	{
-	    $function = '_' . $input;
-        self::$function();
+	    $method = '_' . $input[1] . '_' . $input[2];
+        if(method_exists(__CLASS__, $method)){
+            self::$method();
+        }else{
+            echo self::displayHelp();
+        }
     }
     
     private static function _add()
@@ -13,7 +17,7 @@ class WpAdmin {
         echo "What would you like to add? \n";
     }
     
-    private static function _adduser()
+    private static function _add_user()
     {
         fwrite(STDOUT, "Username: ");
         $username = trim(fgets(STDIN));    
@@ -30,7 +34,7 @@ class WpAdmin {
         }
     }
     
-    private static function _deleteuser()
+    private static function _delete_user()
     {
         fwrite(STDOUT, "Username: ");
         $username = trim(fgets(STDIN));
@@ -57,6 +61,22 @@ class WpAdmin {
         }else{
             return FALSE;
         }
+    }
+    
+    public static function displayHelp()
+    {
+
+$str = <<<EOF
+Usage: wpadmin [options]
+
+Options:
+    add user        You will be prompted for username, email address and password.
+    delete user     You will be prompted for a username.
+
+
+EOF;
+            
+        echo $str;
     }
     
 }
