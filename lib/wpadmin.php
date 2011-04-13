@@ -54,6 +54,11 @@ class WpAdmin {
         }
     }
     
+    private static function _rm_user()
+    {
+       self::_delete_user();
+    }
+    
     private static function _parseYesNo($response)
     {
         if('yes' == strtolower($response) || 'y' == strtolower($response)){
