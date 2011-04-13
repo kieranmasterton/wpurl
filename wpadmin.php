@@ -3,9 +3,7 @@
 
 /**
  * @file
- * wpadmin is a PHP script implementing a command line shell for WordPress. It 
- * has been modeled after drush and much of the approaches here should be
- * attributed to the authors of that project.
+ * wpadmin is a PHP script implementing a command line shell for WordPress.
  *
  * @requires PHP CLI 5.2.0, or newer.
  */
@@ -23,4 +21,4 @@ require_once WPADMIN_LIBS_PATH . '/wpadmin_user.php';
 
 require_once WPADMIN_LIBS_PATH . '/wpadmin.php';
 
-echo WpAdmin::exec($GLOBALS['argv']);
+WpAdmin::exec($GLOBALS['argv']);

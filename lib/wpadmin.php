@@ -8,7 +8,7 @@ class WpAdmin {
         if(method_exists(__CLASS__, $method)){
             self::$method();
         }else{
-            echo self::displayHelp();
+            self::displayHelp();
         }
     }
     
