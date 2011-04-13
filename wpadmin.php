@@ -11,7 +11,10 @@
  */
 
 define('WPADMIN_BASE_PATH', dirname(__FILE__));
+define('WPADMIN_LIBS_PATH', dirname(__FILE__));
 
-require_once WPADMIN_BASE_PATH . '/lib/wp_loader.php';
+require_once WPADMIN_LIBS_PATH . '/wpadmin.php';
+
+var_dump($wpdb);
 
 echo "hello world \n";
