@@ -1,7 +1,7 @@
 Welcome to wpadmin
 ------------------
 
-wpadmin is a command line tool for administering Wordpress.
+wpadmin is a command line tool for administering Wordpress. It is very much still in development and more features will be added over the coming weeks. Please handle with extreme caution as the tool is not extensively tested in the wild. 
 
 Version: 0.0.1
 
@@ -24,6 +24,8 @@ Getting Started
 Usage
 -----
 
+cd /path/to/wordpress/docroot/
+
 Adding a new user:
 
 $ wpadmin user add steve --password=password --email=steve@example.com
@@ -35,6 +37,20 @@ $ wpadmin user role steve --role=editor
 Updating the site title:
 
 $ wpadmin option update --title="New Site Title"
+
+Features
+--------
+
+Users: add, delete and update user accounts inc. roles
+Settings: add, delete and update any any key value pair in wp_options
+
+To Do
+------
+
+Users: list users
+Plugins: list, activate and deactivate plugins
+WP Super cache: bust cache, update settings inc. cache expiry
+
 
 Contributing
 ------------
