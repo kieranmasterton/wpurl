@@ -25,7 +25,7 @@
  */
 class WpAdmin_User extends WpAdmin
 {
-    private $_username = 0;
+    private $_username;
     private $_userData;
     
 /**
