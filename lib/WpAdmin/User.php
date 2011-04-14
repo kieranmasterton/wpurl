@@ -25,19 +25,19 @@
  */
 class WpAdmin_User extends WpAdmin
 {
-    private $_userID = 0;
+    private $_username = 0;
     private $_userData;
     
 /**
      * Class constructor.
      *
      * @access private
-     * @param $userID null|integer
+     * @param $username null|integer
      * @return WpAdmin_User
      */
-    private function __construct($userID = null)
+    private function __construct($username = null)
     {
-        $this->setUserID($userID);
+        $this->setUserID($username);
     }
     
     /**
@@ -45,16 +45,16 @@ class WpAdmin_User extends WpAdmin
      *
      * @static
      * @access public
-     * @param $userID null|integer
+     * @param $username null|integer
      * @return My_Class
      */
-    static public function load($userID)
+    static public function load($username)
     {
-        $object = new WpAdmin_User($userID);
-        $userData = get_user_by('login', $userID);
+        $object = new WpAdmin_User($username);
+        $userData = get_user_by('login', $username);
 
         if(FALSE == $userData){
-            die("[!] Username \"" . $userID ." \" is not valid. \n");
+            die("[!] Username \"" . $username ." \" is not valid. \n");
         }else{
             $object->setUserData($userData);
             return $object;
@@ -93,20 +93,20 @@ class WpAdmin_User extends WpAdmin
                  echo "[!] " . $error . "\n";
             }
     
-            return self::load($result);
+            return self::load($options['username']);
         }
     }
     
     /**
-     * Setter for {@link $_userID}.
+     * Setter for {@link $_username}.
      *
      * @access public 
-     * @param $userID null|integer 
+     * @param $username null|integer 
      * @return void
      */
-    public function setUserID($userID = null)
+    public function setUserID($username = null)
     {
-        $this->_userID = $userID;
+        $this->_username = $username;
     }
     
     /**
@@ -122,18 +122,18 @@ class WpAdmin_User extends WpAdmin
     }
     
     /**
-     * Getter for {@link $_userID}.
+     * Getter for {@link $_username}.
      *
      * @access public 
      * @return integer|null
      */
     public function getUserID()
     {
-        return $this->_userID;
+        return $this->_username;
     }
     
     /**
-     * Getter for {@link $_userID}.
+     * Getter for {@link $_username}.
      *
      * @access public 
      * @return integer|object
