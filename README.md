@@ -18,7 +18,7 @@ Getting Started
 
 3. Make your life easier:
 
-   ln -s /path/to/wpadmin/wpadmin /usr/local/bin/wpadmin OR add the folder that contains wpadmin to your PATH.
+    ln -s /path/to/wpadmin/wpadmin /usr/local/bin/wpadmin OR add the folder that contains wpadmin to your PATH.
    
    
 Usage
