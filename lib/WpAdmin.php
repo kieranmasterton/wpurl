@@ -43,7 +43,7 @@ class WpAdmin
     private static $_methodName;
     
     /**
-     * Params to pass to method.
+     * Params to pass to class method.
      *
      * @static
      * @access private
@@ -51,6 +51,14 @@ class WpAdmin
      */
     private static $_params = array();
     
+    /**
+     * Function invoked from prompt.
+     *
+     * @static
+     * @access  public
+     * @param   $args array
+     * @return  void
+     */
     public static function exec($args)
     {
         // Parse user input create set class properties.
@@ -73,6 +81,14 @@ class WpAdmin
         }
     }
     
+    /**
+     * Parse the arguments send from the command line.
+     *
+     * @static
+     * @access  private
+     * @param   $args array
+     * @return  void
+     */
     private static function _parseOptions($args)
     {
         // Set class name and method name based on first & second user input.
@@ -116,7 +132,16 @@ class WpAdmin
         //var_dump(self::$_params); exit;
     }
     
-    static function _parseYesNo($response)
+    /**
+     * Determines whether the user has said "yes" or "no" to a question prompt on
+     * the command line.
+     *
+     * @static
+     * @access  public
+     * @param   $args array
+     * @return  void
+     */
+    public static function _parseYesNo($response)
     {
         if('yes' == strtolower($response) || 'y' == strtolower($response)){
             return TRUE;
@@ -125,6 +150,13 @@ class WpAdmin
         }
     }
     
+    /**
+     * Displays end-user help.
+     *
+     * @static
+     * @access  public
+     * @return  string
+     */
     public static function displayHelp()
     {
 
