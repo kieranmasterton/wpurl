@@ -63,7 +63,7 @@ class WpAdmin
         if(method_exists($class, $method)){
             if('add' != $method){
                 $object = $class::load(self::$_params['primary']);
-                $class::$method();
+                $object->$method(self::$_params);
             }else{
                 $object = $class::add(self::$_params);
             }
@@ -104,7 +104,7 @@ class WpAdmin
         //var_dump(self::$_params); exit;
     }
     
-    private static function _parseYesNo($response)
+    static function _parseYesNo($response)
     {
         if('yes' == strtolower($response) || 'y' == strtolower($response)){
             return TRUE;
