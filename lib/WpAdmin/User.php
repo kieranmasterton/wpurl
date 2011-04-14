@@ -65,17 +65,23 @@ class WpAdmin_User
      */
     static public function add($options)
     {
+       
         $required = array('username', 'password', 'email');
         foreach($required as $requiredKey){
-           if(!in_array($requiredKey, $options)){
+           if(!array_key_exists($requiredKey, $options)){
                 echo "You must specify --" . $requiredKey . "\n";
            } 
         }
-        
+         
         $result = wp_create_user($options['username'], $options['password'], $options['email']);
-        
+
         if(TRUE == is_int($result)){
             echo "-- User successfully added.\n";
+        }else{
+            foreach($result->errors as $key => $value){
+                $error = $value[0];
+            }
+             echo "-- " . $error . "\n";
         }
     
         return self::load($result);
