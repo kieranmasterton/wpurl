@@ -20,7 +20,7 @@
  * the required class.
  *
  * @since   0.0.1
- * @author  Kieran Masteron http://twitter.com/kieranmasterton
+ * @author  Kieran Masterton http://twitter.com/kieranmasterton
  */
 class WpAdmin
 {
@@ -99,7 +99,7 @@ class WpAdmin
         unset($args[0], $args[1], $args[2]);
         
         // Special conditional checks for user commands.
-        if('WpAdmin_User' == self::$_className && 'add' == self::$_methodName){
+        if('WpAdmin_User' == self::$_className && 'add' == self::$_methodName  || 'update' == self::$_methodName || 'delete' == self::$_methodName){
             if(preg_match('/^--.*$/', $args[3])){
                 echo "Usage: wpadmin user add steve --password=password --email=steve@example.com\n";
                 die("[!] You must specify a valid username\n");
@@ -161,11 +161,16 @@ class WpAdmin
     {
 
 $str = <<<EOF
-Usage: wpadmin [options]
+Usage: wpadmin [options] [params]
 
 Options:
-add user You will be prompted for username, email address and password.
-delete user You will be prompted for a username.
+    user add {username} --email={email} --password={password}
+    user delete {username}
+    user update role {username} --role={subscriber, editor, author, administrator}
+    
+    wpadmin option add --{key}={value}
+    wpadmin option update --{key}={value}
+    wpadmin option delete --{key}
 
 
 EOF;

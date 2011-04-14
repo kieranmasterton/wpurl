@@ -22,7 +22,9 @@
  * $ wpadmin user add --username=steve --password=s0m3t1ngSecUr3 --email=bob@example.com
  * 
  * @since 0.0.1
+ * @author  Kieran Masterton http://twitter.com/kieranmasterton
  */
+ 
 class WpAdmin_User extends WpAdmin
 {
     private $_username;
@@ -176,33 +178,38 @@ class WpAdmin_User extends WpAdmin
      */
     public function update(array $options = array())
     {
+        
         $userData = $this->getUserData();
         
         unset($options['username'], $options['primary']);
-        
-        foreach($options as $key => $value){
+
+        if(!empty($options)){
+            foreach($options as $key => $value){
             
-            switch($key){
-                case 'role':
-                    $validRoles = array('subscriber', 'author', 'editor','administrator');
-                    if(!in_array($options['role'], $validRoles)){
-                        $missingArg = TRUE;
-                        $error = "[!] You must specify a valid role: subscriber, author, editor, administrator. \n";
-                    }else{
-                        $missingArg = FALSE;
-                    }
-                break;
-                
-            }
-                    
-            if(FALSE == $missingArg){    
-                $result = wp_update_user(array ('ID' => $userData->ID, 'role' => strtolower($options[$key])));
-                if(TRUE == is_int($result)){
-                    echo "-- User successfully updated.\n";
+                switch($key){
+                    case 'role':
+                        $key = 'role';
+                        $validRoles = array('subscriber', 'author', 'editor','administrator');
+                        if(!in_array($options['role'], $validRoles)){
+                            $missingArg = TRUE;
+                            $error = "[!] You must specify a valid role: subscriber, author, editor, administrator. \n";
+                        }else{
+                            $missingArg = FALSE;
+                        }
+                    break;
                 }
-            }else{
-                echo $error;
+                    
+                if(FALSE == $missingArg){    
+                    $result = wp_update_user(array ('ID' => $userData->ID, $key => strtolower($options[$key])));
+                    if(TRUE == is_int($result)){
+                        echo "-- User successfully updated.\n";
+                    }
+                }else{
+                    echo $error;
+                }
             }
+        }else{
+            die("[!] You must specify a param to update. \n");
         }
     }
     
