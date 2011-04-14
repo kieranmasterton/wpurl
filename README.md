@@ -65,8 +65,8 @@ GNU General Public License
 Credits and Thanks
 ------------------
 
-Developed by Jon Reeks <jon@88mph.co> & Kieran Masterton <kieran@88mph.co> at 88mph.co - http://88mph.co
+Developed by Jon Reeks <jon@88mph.co> & Kieran Masterton <kieran@88mph.co> at 88mph.co - <http://88mph.co>
 
-Credit must go to the developers of drush the Drupal command line tool for inspiration and their shell wrapper we modified for use with wpadmin - http://drupal.org/project/drush
+Credit must go to the developers of drush the Drupal command line tool for inspiration and their shell wrapper we modified for use with wpadmin - <http://drupal.org/project/drush>
 
 Thanks go to Sam Eaton for suggesting we start this project. 
