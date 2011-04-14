@@ -57,17 +57,17 @@ class WpAdmin
         // Check class exists and instantiate object & call method.
         $class = self::$_className;
         $method = self::$_methodName;
-            if(method_exists($class, $method)){
-                if('add' != $method){
-                    $object = $class::load(self::$_params['primary']);
-                    $class::$method();
-                }else{
-                    $object = $class::add(self::$_params);
-                }
+        if(method_exists($class, $method)){
+            if('add' != $method){
+                $object = $class::load(self::$_params['primary']);
+                $class::$method();
             }else{
-                // Else class / method not found, display help.
-                self::displayHelp();
+                $object = $class::add(self::$_params);
             }
+        }else{
+            // Else class / method not found, display help.
+            self::displayHelp();
+        }
     }
     
     private static function _parseOptions($args)
@@ -88,7 +88,7 @@ class WpAdmin
         
         // Special circumstances for primary key for load lookup.
         switch (self::$_className) {
-            case 'user':
+            case 'WpAdmin_User':
                 self::$_params['primary'] = self::$_params['username'];
                 break;
             default:
