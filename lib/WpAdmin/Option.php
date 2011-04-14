@@ -139,7 +139,7 @@ class WpAdmin_Option extends WpAdmin
             if (true === $res){
                 echo "-- Option '" . $key . "' successfully updated.\n";
             }else{
-                echo "[!] Option '" . $key . "' not updated. Does it exist?\n";
+                echo "[!] Option '" . $key . "' not updated. Does it exist? Is the value already '" . $value . "'? \n";
             }
         }
     }
