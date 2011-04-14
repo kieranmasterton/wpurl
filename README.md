@@ -3,6 +3,8 @@ Welcome to wpadmin
 
 wpadmin is a command line tool for administering Wordpress.
 
+Version: 0.0.1
+
 
 Getting Started
 ---------------
