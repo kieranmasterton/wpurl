@@ -178,25 +178,31 @@ class WpAdmin_User extends WpAdmin
     {
         $userData = $this->getUserData();
         
-        $roles = array('subscriber', 'author', 'editor','administrator');
-        foreach($roles as $requiredValue){
-            if($requiredValue != $options['role']){        
-                if(FALSE == $missingArg){
-                    continue;
-                }
-                $missingArg = TRUE;
-            }else{
-                $missingArg = FALSE;
-            }
-        }
+        unset($options['username'], $options['primary']);
         
-        if(FALSE == $missingArg){    
-            $result = wp_update_user(array ('ID' => $userData->ID, 'role' => strtolower($options['role'])));
-            if(TRUE == is_int($result)){
-                echo "-- User successfully updated.\n";
+        foreach($options as $key => $value){
+            
+            switch($key){
+                case 'role':
+                    $validRoles = array('subscriber', 'author', 'editor','administrator');
+                    if(!in_array($options['role'], $validRoles)){
+                        $missingArg = TRUE;
+                        $error = "[!] You must specify a valid role: subscriber, author, editor, administrator. \n";
+                    }else{
+                        $missingArg = FALSE;
+                    }
+                break;
+                
             }
-        }else{
-            echo "[!] You must specify a valid role: subscriber, author, editor, administrator.\n";
+                    
+            if(FALSE == $missingArg){    
+                $result = wp_update_user(array ('ID' => $userData->ID, 'role' => strtolower($options[$key])));
+                if(TRUE == is_int($result)){
+                    echo "-- User successfully updated.\n";
+                }
+            }else{
+                echo $error;
+            }
         }
     }
     
