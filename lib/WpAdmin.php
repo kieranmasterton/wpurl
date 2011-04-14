@@ -82,6 +82,7 @@ class WpAdmin
         // Unset no longer required user input.
         unset($args[0], $args[1], $args[2]);
         
+        // Special conditional checks for user commands.
         if('WpAdmin_User' == self::$_className && 'add' == self::$_methodName){
             if(preg_match('/^--.*$/', $args[3])){
                 echo "Usage: wpadmin user add steve --password=password --email=steve@example.com\n";
