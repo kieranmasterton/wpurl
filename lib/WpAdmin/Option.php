@@ -19,15 +19,40 @@
  * The WpAdmin_Option class provides methods for dealing with the administering
  * of the WordPress options.
  * 
- * $ wpadmin option [update, add] --[key]="[value]"
- * $ wpadmin option update --title="val"
+ * @example
+ * 
+ *      $ wpadmin option [command] --[option_name]="[value]"
+ *
+ *      $ wpadmin option add --blogname="My Cool Blog"
+ *      $ wpadmin option update --siteurl="http://my-cool-blog.com"
+ * 
+ *      $ wpadmin option delete --option=[option_name]
  * 
  * @since 0.0.1
+ * @author  Jon http://twitter.com/jonreeks
  */
-class WpAdmin_Option
+class WpAdmin_Option extends WpAdmin
 {
+    /**
+     * Option name.
+     *
+     * A valid option_name value.(Options database table column)
+     *
+     * @access private
+     * @see WpAdmin_Option::setOptionName()
+     * @see WpAdmin_Option::getOptionName()
+     * @param  string
+     */
     private $_optionName = null;
     
+    /**
+     * Array of option data.
+     *
+     * @access private
+     * @see WpAdmin_Option::setOptionData()
+     * @see WpAdmin_Option::getOptionData()
+     * @param  array
+     */
     private $_optionData = array();
     
     /**
@@ -39,7 +64,7 @@ class WpAdmin_Option
      */
     private function __construct($optionName = null)
     {
-        $this->setOptionID($optionName);
+        $this->setOptionName($optionName);
     }
     
     /**
@@ -146,7 +171,7 @@ class WpAdmin_Option
      * @param $optionName null|integer 
      * @return void
      */
-    public function setOptionID($optionName = null)
+    public function setOptionName($optionName = null)
     {
         $this->_optionName = $optionName;
     }
@@ -157,7 +182,7 @@ class WpAdmin_Option
      * @access public 
      * @return integer|null
      */
-    public function getOptionID()
+    public function getOptionName()
     {
         return $this->_optionName;
     }
