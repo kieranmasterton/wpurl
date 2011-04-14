@@ -91,6 +91,55 @@ class WpAdmin_Option
     }
     
     /**
+     * Factory method for inserting a new "option" into the database and then
+     * creating an instance of WpAdmin_Option.
+     *
+     * @static
+     * @access  public
+     * @param   $bind array
+     * @return  void
+     */
+    public function update($bind)
+    {
+        unset($bind['primary']);
+        
+        if(empty($bind)){
+            echo 'You must specify an option key. E.g. --my_key=My Value' . "\n";
+            return;
+        }
+        
+        // Add the option.
+        foreach($bind as $key => $value){
+            $res = update_option($key, $value);
+            if (true === $res){
+                echo "-- Option '" . $key . "' successfully updated.\n";
+            }else{
+                echo "[!] Option '" . $key . "' not updated. Does it exist?\n";
+            }
+        }
+    }
+    
+    public function delete($bind)
+    {
+        unset($bind['primary']);
+        
+        if(empty($bind)){
+            echo 'You must specify an option key. E.g. --option=my_key' . "\n";
+            return;
+        }
+        
+        // Add the option.
+        foreach($bind as $key => $value){
+            $res = delete_option($value);
+            if (true === $res){
+                echo "-- Option '" . $value . "' successfully deleted.\n";
+            }else{
+                echo "[!] Option '" . $value . "' not deleted. Does it exist?\n";
+            }
+        }
+    }
+    
+    /**
      * Setter for {@link $_optionName}.
      *
      * @access public 
