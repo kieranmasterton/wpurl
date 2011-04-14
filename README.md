@@ -9,7 +9,7 @@ Getting Started
 
 1. Grab yourself a copy of wpadmin:
 
-    cd <wherever you'd like to keep wpadmin>
+    cd [wherever you'd like to keep wpadmin]
     git co git@github.com:88mph/wpadmin.git
 
 2. Make wpadmin executable:
