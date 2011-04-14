@@ -22,6 +22,7 @@ if(TRUE == is_readable('wp-load.php')){
     # Load wpdmin libs
     require_once WPADMIN_LIBS_PATH . '/WpAdmin.php';
     require_once WPADMIN_LIBS_PATH . '/WpAdmin/User.php';
+    require_once WPADMIN_LIBS_PATH . '/WpAdmin/Setting.php';
 
     WpAdmin::exec($argv);
 }else{

@@ -57,8 +57,9 @@ class WpAdmin
         self::_parseOptions($args);
 
         // Check class exists and instantiate object & call method.
-        $class = self::$_className;
-        $method = self::$_methodName;
+        $class      = self::$_className;
+        $method     = self::$_methodName;
+        
         if(method_exists($class, $method)){
             if('add' != $method){
                 $object = $class::load(self::$_params['primary']);
