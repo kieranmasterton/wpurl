@@ -1,51 +1,51 @@
 <?php
 
-class WpAdmin {
-    
-    /**
-* wpadmin
-*
-* Coded to Zend's coding standards:
-* http://framework.zend.com/manual/en/coding-standard.html
-*
-* File format: UNIX
-* File encoding: UTF8
-* File indentation: Spaces (4). No tabs
-*
-* @copyright Copyright (c) 2011 88mph. (http://88mph.co)
-* @license GNU
-*/
+/**
+ * wpadmin
+ *
+ * Coded to Zend's coding standards:
+ * http://framework.zend.com/manual/en/coding-standard.html
+ *
+ * File format: UNIX
+ * File encoding: UTF8
+ * File indentation: Spaces (4). No tabs
+ *
+ * @copyright Copyright (c) 2011 88mph. (http://88mph.co)
+ * @license GNU
+ */
  
-    /**
-* The WpAdmin class provides methods for parsing user input and instantiating
-* the required class.
-*
-* @since 0.0.1
-*/
+/**
+ * The WpAdmin class provides methods for parsing user input and instantiating
+ * the required class.
+ *
+ * @since 0.0.1
+ */
+
+class WpAdmin {
 
     private static $_className;
     private static $_methodName;
     private static $_params = array();
     
     public static function exec($args)
-{
-// Parse user input create set class properties.
-self::_parseOptions($args);
+    {
+        // Parse user input create set class properties.
+        self::_parseOptions($args);
 
-// Check class exists and instantiate object & call method.
-$class = self::$_className;
-$method = self::$_methodName;
-        if(method_exists($class, $method)){
-            if('add' != $method){
-                $object = $class::load(self::$_params['primary']);
-                $class::$method();
+        // Check class exists and instantiate object & call method.
+        $class = self::$_className;
+        $method = self::$_methodName;
+            if(method_exists($class, $method)){
+                if('add' != $method){
+                    $object = $class::load(self::$_params['primary']);
+                    $class::$method();
+                }else{
+                    $object = $class::add(self::$_params);
+                }
             }else{
-                $object = $class::add(self::$_params);
+                // Else class / method not found, display help.
+                self::displayHelp();
             }
-        }else{
-            // Else class / method not found, display help.
-            self::displayHelp();
-        }
     }
     
     private static function _parseOptions($args)
