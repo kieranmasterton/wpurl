@@ -54,7 +54,7 @@ class WpAdmin_Option
     {
         $object = new WpAdmin_Option($optionName);
         
-        $object->setData($object->queryData($optionName));
+        $object->setOptionData($object->queryData($optionName));
         
         return $object;
     }
@@ -78,6 +78,7 @@ class WpAdmin_Option
             return;
         }
         
+        // Add the option.
         foreach($bind as $key => $value){
             $res = add_option($key, $value);
             if (true === $res){
@@ -86,7 +87,6 @@ class WpAdmin_Option
                 echo "[!] Option '" . $key . "' not added. Does it already exist?\n";
             }
             return self::load($key);
-            break;
         }
     }
     
@@ -140,19 +140,11 @@ class WpAdmin_Option
     {
         global $wpdb;
         
-        $stmt  = 'SELECT ';
+        $stmt  = 'SELECT * ';
         $stmt .= 'FROM `' . $wpdb->options . '` ';
-        $stmt .= 'WHERE option_name = \'' . mysql_real_escape_string($optionName) . '\'';
+        $stmt .= 'WHERE `option_name` = \'' . mysql_real_escape_string($optionName) . '\' ';
         $stmt .= 'LIMIT 1';
         
-        echo '<pre>';
-        print_r($stmt);
-        echo '</pre>';
-        exit();
-        
-        $wpdb->query();
-        echo '<pre>';
-        print_r($wpdb);
-        echo '</pre>';
+        return $wpdb->get_row($stmt, ARRAY_A);
     }
 }
