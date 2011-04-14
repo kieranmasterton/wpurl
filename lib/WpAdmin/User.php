@@ -1,24 +1,110 @@
 <?php
 
-class WpAdmin_User {
+/**
+ * wpadmin
+ *
+ * Coded to Zend's coding standards:
+ * http://framework.zend.com/manual/en/coding-standard.html
+ *
+ * File format: UNIX
+ * File encoding: UTF8
+ * File indentation: Spaces (4). No tabs
+ *
+ * @category   User
+ * @copyright  Copyright (c) 2011 88mph. (http://88mph.co)
+ * @license    GNU
+ */
+ 
+/**
+ * The WpAdmin_User class provides methods for dealing with the administration
+ * of WordPress users.
+ * 
+ * $ wpadmin user add --username=steve --password=s0m3t1ngSecUr3 --email=bob@example.com
+ * 
+ * @since 0.0.1
+ */
+class WpAdmin_User
+{
+    private $_userID = 0;
     
-    public static function add()
+/**
+     * Class constructor.
+     *
+     * @access private
+     * @param $userID null|integer
+     * @return WpAdmin_User
+     */
+    private function __construct($userID = null)
     {
-        fwrite(STDOUT, "Username: ");
-        $username = trim(fgets(STDIN));    
-        fwrite(STDOUT, "Password: ");
-        $password = trim(fgets(STDIN));
-        fwrite(STDOUT, "Email: ");
-        $email = trim(fgets(STDIN));
-
-        $result = wp_create_user($username, $password, $email);
+        $this->setUserID($userID);
+    }
+    
+    /**
+     * Factory method for creating an instance of WpAdmin_User.
+     *
+     * @static
+     * @access public
+     * @param $userID null|integer
+     * @return My_Class
+     */
+    static public function load($userID)
+    {
+        $object = new WpAdmin_User($userID);
+        
+        return $object;
+    }
+    
+    /**
+     * Factory method for inserting a new user into the database and then
+     * creating an instance of WpAdmin_User.
+     *
+     * @static
+     * @access  public
+     * @param   $options    array  Options array of key value pairs
+     * @return  WpAdmin_User
+     */
+    static public function add($options)
+    {
+        $required = array('username', 'password', 'email');
+        foreach($required as $requiredKey){
+           if(!in_array($requiredKey, $options)){
+                echo "You must specify --" . $requiredKey . "\n";
+           } 
+        }
+        
+        $result = wp_create_user($options['username'], $options['password'], $options['email']);
         
         if(TRUE == is_int($result)){
             echo "-- User successfully added.\n";
         }
+    
+        return self::load($result);
     }
     
-    public static function delete()
+    /**
+     * Setter for {@link $_userID}.
+     *
+     * @access public 
+     * @param $userID null|integer 
+     * @return void
+     */
+    public function setUserID($userID = null)
+    {
+        $this->_userID = $userID;
+    }
+    
+    /**
+     * Getter for {@link $_userID}.
+     *
+     * @access public 
+     * @return integer|null
+     */
+    public function getUserID()
+    {
+        return $this->_userID;
+    }
+    
+    public function delete()
     {
         fwrite(STDOUT, "Username: ");
         $username = trim(fgets(STDIN));

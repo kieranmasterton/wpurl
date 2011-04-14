@@ -88,4 +88,4 @@ fi
 
 # Pass in the path to php so that wpadmin knows which one
 # to use if it re-launches itself to run subcommands
-exec $php "$SCRIPT_PATH" "$@" --php="$php"
+exec $php "$SCRIPT_PATH" "$@"
