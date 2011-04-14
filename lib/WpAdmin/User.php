@@ -37,7 +37,7 @@ class WpAdmin_User extends WpAdmin
      */
     private function __construct($username = null)
     {
-        $this->setUserID($username);
+        $this->setUsername($username);
     }
     
     /**
@@ -104,7 +104,7 @@ class WpAdmin_User extends WpAdmin
      * @param $username null|integer 
      * @return void
      */
-    public function setUserID($username = null)
+    public function setUsername($username = null)
     {
         $this->_username = $username;
     }
@@ -127,7 +127,7 @@ class WpAdmin_User extends WpAdmin
      * @access public 
      * @return integer|null
      */
-    public function getUserID()
+    public function getUsername()
     {
         return $this->_username;
     }
