@@ -42,13 +42,16 @@ Features
 --------
 
 Users: add, delete and update user accounts inc. roles
+
 Settings: add, delete and update any any key value pair in wp_options
 
 To Do
 ------
 
 Users: list users
+
 Plugins: list, activate and deactivate plugins
+
 WP Super cache: bust cache, update settings inc. cache expiry
 
 
