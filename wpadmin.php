@@ -20,11 +20,10 @@ if(TRUE == is_readable('wp-load.php')){
     require_once(ABSPATH . 'wp-admin/includes/admin.php');
 
     # Load wpdmin libs
-    require_once WPADMIN_LIBS_PATH . '/wpadmin_user.php';
+    require_once WPADMIN_LIBS_PATH . '/WpAdmin.php';
+    require_once WPADMIN_LIBS_PATH . '/WpAdmin/User.php';
 
-    require_once WPADMIN_LIBS_PATH . '/wpadmin.php';
-
-    WpAdmin::exec($GLOBALS['argv']);
+    WpAdmin::exec($argv);
 }else{
     die("Either this is not a WordPress document root or you do not have permission to administer this site. \n");
 }
