@@ -17,10 +17,10 @@
  
 /**
  * The WpAdmin_Option class provides methods for dealing with the administering
- * of the WordPress settings.
+ * of the WordPress options.
  * 
- * $ wpadmin setting [update, add] --[key]="[value]"
- * $ wpadmin setting update --title="val"
+ * $ wpadmin option [update, add] --[key]="[value]"
+ * $ wpadmin option update --title="val"
  * 
  * @since 0.0.1
  */
@@ -28,7 +28,7 @@ class WpAdmin_Option
 {
     private $_optionName = null;
     
-    private $_data = array();
+    private $_optionData = array();
     
     /**
      * Class constructor.
@@ -55,8 +55,6 @@ class WpAdmin_Option
         $object = new WpAdmin_Option($optionName);
         
         $object->setData($object->queryData($optionName));
-        
-        exit();
         
         return $object;
     }
@@ -116,26 +114,26 @@ class WpAdmin_Option
     }
     
     /**
-     * Setter for {@link $_data}.
+     * Setter for {@link $_optionData}.
      *
      * @access public
      * @param $data array
      * @return void
      */
-    public function setData($data = array())
+    public function setOptionData($optionData = array())
     {
-        $this->_data = $data;
+        $this->_optionData = $optionData;
     }
     
     /**
-     * Getter for {@link $_data}.
+     * Getter for {@link $_optionData}.
      *
      * @access public
      * @return void
      */
-    public function getData()
+    public function getOptionData()
     {
-        return $this->_data;
+        return $this->_optionData;
     }
     
     public function queryData($optionName)
