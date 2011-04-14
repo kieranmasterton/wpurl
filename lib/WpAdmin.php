@@ -10,15 +10,17 @@
  * File encoding: UTF8
  * File indentation: Spaces (4). No tabs
  *
- * @copyright Copyright (c) 2011 88mph. (http://88mph.co)
- * @license GNU
+ * @copyright   Copyright (c) 2011 88mph. (http://88mph.co)
+ * @license     GNU
+ * @author      88mph http://88mph.co
  */
  
 /**
  * The WpAdmin class provides methods for parsing user input and instantiating
  * the required class.
  *
- * @since 0.0.1
+ * @since   0.0.1
+ * @author  Kieran Masteron http://twitter.com/kieranmasterton
  */
 class WpAdmin
 {
