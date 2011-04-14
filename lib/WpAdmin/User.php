@@ -23,9 +23,10 @@
  * 
  * @since 0.0.1
  */
-class WpAdmin_User
+class WpAdmin_User extends WpAdmin
 {
     private $_userID = 0;
+    private $_userData;
     
 /**
      * Class constructor.
@@ -50,8 +51,14 @@ class WpAdmin_User
     static public function load($userID)
     {
         $object = new WpAdmin_User($userID);
-        
-        return $object;
+        $userData = get_user_by('login', $userID);
+
+        if(FALSE == $userData){
+            die("[!] Username \"" . $userID ." \" is not valid. \n");
+        }else{
+            $object->setUserData($userData);
+            return $object;
+        }
     }
     
     /**
@@ -65,26 +72,29 @@ class WpAdmin_User
      */
     static public function add($options)
     {
-       
+        $missingArg = FALSE;
         $required = array('username', 'password', 'email');
         foreach($required as $requiredKey){
            if(!array_key_exists($requiredKey, $options)){
-                echo "You must specify --" . $requiredKey . "\n";
+                echo "[!] You must specify --" . $requiredKey . "\n";
+                $missingArg = TRUE;
            } 
         }
-         
-        $result = wp_create_user($options['username'], $options['password'], $options['email']);
+        
+        if (FALSE == $missingArg){ 
+            $result = wp_create_user($options['username'], $options['password'], $options['email']);
 
-        if(TRUE == is_int($result)){
-            echo "-- User successfully added.\n";
-        }else{
-            foreach($result->errors as $key => $value){
-                $error = $value[0];
+            if(TRUE == is_int($result)){
+                echo "-- User successfully added.\n";
+            }else{
+                foreach($result->errors as $key => $value){
+                    $error = $value[0];
+                }
+                 echo "[!] " . $error . "\n";
             }
-             echo "-- " . $error . "\n";
-        }
     
-        return self::load($result);
+            return self::load($result);
+        }
     }
     
     /**
@@ -100,6 +110,18 @@ class WpAdmin_User
     }
     
     /**
+     * Setter for {@link $_userData}.
+     *
+     * @access public 
+     * @param $userData null|object 
+     * @return void
+     */
+    public function setUserData($userData = null)
+    {
+        $this->_userData = $userData;
+    }
+    
+    /**
      * Getter for {@link $_userID}.
      *
      * @access public 
@@ -110,37 +132,71 @@ class WpAdmin_User
         return $this->_userID;
     }
     
-    public function delete()
+    /**
+     * Getter for {@link $_userID}.
+     *
+     * @access public 
+     * @return integer|object
+     */
+    public function getUserData()
     {
-        fwrite(STDOUT, "Username: ");
-        $username = trim(fgets(STDIN));
-        $user = get_user_by('login', $username);
-        fwrite(STDOUT, "Are you sure you wish to delete the user with the following email address? (Y/N) " . $user->user_email . ": ");
+        return $this->_userData;
+    }
+    
+    
+    /**
+     * Method for deleting a user
+     *
+     * @access  public
+     * @return  void
+     */
+    public function delete(array $options = array())
+    {
+        $userData = $this->getUserData();
+        
+        fwrite(STDOUT, "Are you sure you wish to delete the user with the following email address? (Y/N) " . $userData->user_email . ": ");
         $response = trim(fgets(STDIN));
         
-        if(TRUE == self::_parseYesNo($response)){
-            $result = wp_delete_user($user->ID);
+        if(TRUE == parent::_parseYesNo($response)){
+            $result = wp_delete_user($userData->ID);
             
             if(TRUE == $result){
                 echo "-- User successfully deleted. \n";
             }
         }else{
-            echo "-- User deletion cancelled. \n";
+            echo "[x] User deletion cancelled. \n";
         }
     }
     
-    public static function role()
+    /**
+     * Method for updating a user
+     *
+     * @access  public
+     * @return  void
+     */
+    public function update(array $options = array())
     {
-        fwrite(STDOUT, "Username: ");
-        $username = trim(fgets(STDIN));
-        $user = get_user_by('login', $username);
-        fwrite(STDOUT, "Role (subscriber, author, editor, administrator): ");
-        $role = trim(fgets(STDIN));
-            
-        $result = wp_update_user(array ('ID' => $user->ID, 'role' => strtolower($role)));
-            
-        if(TRUE == is_int($result)){
-            echo "-- User successfully updated.\n";
+        $userData = $this->getUserData();
+        
+        $roles = array('subscriber', 'author', 'editor','administrator');
+        foreach($roles as $requiredValue){
+            if($requiredValue != $options['role']){        
+                if(FALSE == $missingArg){
+                    continue;
+                }
+                $missingArg = TRUE;
+            }else{
+                $missingArg = FALSE;
+            }
+        }
+        
+        if(FALSE == $missingArg){    
+            $result = wp_update_user(array ('ID' => $userData->ID, 'role' => strtolower($options['role'])));
+            if(TRUE == is_int($result)){
+                echo "-- User successfully updated.\n";
+            }
+        }else{
+            echo "[!] You must specify a valid role: subscriber, author, editor, administrator.\n";
         }
     }
     
