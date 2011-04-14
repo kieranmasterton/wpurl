@@ -54,7 +54,7 @@ class WpAdmin_User extends WpAdmin
         $userData = get_user_by('login', $username);
 
         if(FALSE == $userData){
-            die("[!] Username \"" . $username ." \" is not valid. \n");
+            die("[!] Username \"" . $username ."\" is not valid. \n");
         }else{
             $object->setUserData($userData);
             return $object;
@@ -86,14 +86,14 @@ class WpAdmin_User extends WpAdmin
 
             if(TRUE == is_int($result)){
                 echo "-- User successfully added.\n";
+                return self::load($options['username']);
             }else{
                 foreach($result->errors as $key => $value){
                     $error = $value[0];
                 }
-                 echo "[!] " . $error . "\n";
+                 die("[!] " . $error . "\n");
+                 
             }
-    
-            return self::load($options['username']);
         }
     }
     

@@ -82,6 +82,17 @@ class WpAdmin
         // Unset no longer required user input.
         unset($args[0], $args[1], $args[2]);
         
+        if('WpAdmin_User' == self::$_className && 'add' == self::$_methodName){
+            if(preg_match('/^--.*$/', $args[3])){
+                echo "Usage: wpadmin user add steve --password=password --email=steve@example.com\n";
+                die("[!] You must specify a valid username\n");
+            }else{
+                self::$_params['username'] = $args[3];
+                unset($args[3]);
+            }
+
+        }
+        
         // Loop through user input create array of key value pairs.
         foreach($args as $k => $value){
             $pair = preg_split('/=/',$value);
