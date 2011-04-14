@@ -20,11 +20,33 @@
  *
  * @since 0.0.1
  */
-
-class WpAdmin {
-
+class WpAdmin
+{
+    /**
+     * Class name to instantiate.
+     *
+     * @static
+     * @access private
+     * @param  string
+     */
     private static $_className;
+    
+    /**
+     * Method name to instantiate.
+     *
+     * @static
+     * @access private
+     * @param  string
+     */
     private static $_methodName;
+    
+    /**
+     * Params to pass to method.
+     *
+     * @static
+     * @access private
+     * @param  array
+     */
     private static $_params = array();
     
     public static function exec($args)

@@ -19,13 +19,14 @@
  * The WpAdmin_Setting class provides methods for dealing with the administering
  * of the WordPress settings.
  * 
- * $ wpadmin setting --title="val"
+ * $ wpadmin setting [update, add] --[key]="[value]"
+ * $ wpadmin setting update --title="val"
  * 
  * @since 0.0.1
  */
 class WpAdmin_Setting
 {
-    private $_settingID = 0;
+    private $_settingID = null;
     
     /**
      * Class constructor.
@@ -62,12 +63,23 @@ class WpAdmin_Setting
      * @access  public
      * @param   $key    string  Option key
      * @param   $value  string  Option value
-     * @return WpAdmin_Setting
+     * @return  WpAdmin_Setting
      */
-    static public function create($key, $value)
+    static public function add($bind)
     {
+        echo '<pre>';
+        print_r($bind);
+        echo '</pre>';
+        exit();
+        $required = array('username', 'password', 'email');
+        foreach($required as $requiredKey){
+           if(!in_array($requiredKey, $options)){
+                echo "You must specify --" . $requiredKey . "\n";
+           } 
+        }
+        
         add_option($key, $value);
-        return self::load(Zend_Registry::get('db')->lastInsertId());
+        return self::load();
     }
     
     /**
