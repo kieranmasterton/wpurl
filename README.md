@@ -36,7 +36,7 @@ $ wpadmin user update role steve --role=editor
 
 Updating the site title:
 
-$ wpadmin option update --title="New Site Title"
+$ wpadmin option update --blogname="New Site Title"
 
 Features
 --------
