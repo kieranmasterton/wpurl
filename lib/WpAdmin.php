@@ -68,16 +68,24 @@ class WpAdmin
         $class      = self::$_className;
         $method     = self::$_methodName;
         
-        if(method_exists($class, $method)){
-            if('add' != $method){
-                $object = $class::load(self::$_params['primary']);
-                $object->$method(self::$_params);
-            }else{
+        // Decide how to call the class / method.
+        switch($method){
+            case 'add':
                 $object = $class::add(self::$_params);
-            }
-        }else{
-            // Else class / method not found, display help.
-            self::displayHelp();
+            break;
+            case 'list':
+                $object = $class::listAll(self::$_params);
+            break;
+            default:
+                // Does the class and method requested exist?
+                if(method_exists($class, $method)){
+                    $object = $class::load(self::$_params['primary']);
+                    $object->$method(self::$_params);
+                }else{
+                    // Else class / method not found, display help.
+                    self::displayHelp();
+                }
+            break;
         }
     }
     
@@ -114,7 +122,11 @@ class WpAdmin
         foreach($args as $k => $value){
             $pair = preg_split('/=/',$value);
             $pair[0] = substr($pair[0], 2);
-            self::$_params[$pair[0]] = $pair[1];
+            if("username" == $pair[0] && 'update' == self::$_methodName){
+                self::$_params['newusername'] = $pair[1];
+            }else{
+                self::$_params[$pair[0]] = $pair[1];
+            }
         }
         
         // Special circumstances for primary key for load lookup.
@@ -164,13 +176,29 @@ $str = <<<EOF
 Usage: wpadmin [options] [params]
 
 Options:
+    User functions:
+    
     user add {username} --email={email} --password={password}
     user delete {username}
-    user update role {username} --role={subscriber, editor, author, administrator}
+    user update {username} --role={subscriber, editor, author, administrator}
+    user update {username} --password
+                           --email
+                           --display_name
+                           --nickname
+                           --first_name
+                           --last_name
+                           --description
+    
+    Option functions:
     
     wpadmin option add --{key}={value}
     wpadmin option update --{key}={value}
     wpadmin option delete --{key}
+    
+    Key/value pairs can be found in the wp_options table. For example this command 
+    will disable user comments:
+    
+    wpadmin option update --default_comment_status=closed
 
 
 EOF;

@@ -29,7 +29,7 @@
  *      $ wpadmin option delete --option=[option_name]
  * 
  * @since 0.0.1
- * @author  Jon http://twitter.com/jonreeks
+ * @author  Jon Reeks http://twitter.com/jonreeks
  */
 class WpAdmin_Option extends WpAdmin
 {

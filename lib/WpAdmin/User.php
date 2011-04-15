@@ -178,36 +178,74 @@ class WpAdmin_User extends WpAdmin
      */
     public function update(array $options = array())
     {
-        
+        // Get user data.
         $userData = $this->getUserData();
         
+        // These aren't needed.
         unset($options['username'], $options['primary']);
 
+        // Check to make sure some options have been submitted.
         if(!empty($options)){
-            foreach($options as $key => $value){
             
+            $updateFields = array('ID' => $userData->ID);
+            
+            // Loop through options.
+            foreach($options as $key => $value){
+                // Switch gears based on key.
                 switch($key){
                     case 'role':
-                        $key = 'role';
                         $validRoles = array('subscriber', 'author', 'editor','administrator');
                         if(!in_array($options['role'], $validRoles)){
                             $missingArg = TRUE;
                             $error = "[!] You must specify a valid role: subscriber, author, editor, administrator. \n";
                         }else{
                             $missingArg = FALSE;
+                            $updateFields[$key] = $value;
+                        }
+                    break;
+                    case 'newusername':
+                        die("[!] Sorry WordPress does not allow you to change usernames. \n");
+                    break;
+                    case 'email':
+                        if(NULL == $value){
+                            $missingArg = TRUE;
+                            $error = "[!] You must specify a value i.e. --" . $key ."={value}\n";
+                        }else{
+                            $missingArg = FALSE;
+                            $updateFields['user_email'] = $value;
+                        }
+                    break;
+                    case 'password':
+                        if(NULL == $value){
+                            $missingArg = TRUE;
+                            $error = "[!] You must specify a value i.e. --" . $key ."={value}\n";
+                        }else{
+                            $missingArg = FALSE;
+                            $updateFields['user_pass'] = $value;
+                        }
+                    break;
+                    default:
+                        if(NULL == $value){
+                            $missingArg = TRUE;
+                            $error = "[!] You must specify a value i.e. --" . $key ."={value}\n";
+                        }else{
+                            $missingArg = FALSE;
+                            $updateFields[$key] = $value;
                         }
                     break;
                 }
-                    
-                if(FALSE == $missingArg){    
-                    $result = wp_update_user(array ('ID' => $userData->ID, $key => strtolower($options[$key])));
-                    if(TRUE == is_int($result)){
-                        echo "-- User successfully updated.\n";
-                    }
-                }else{
-                    echo $error;
-                }
             }
+            
+            // Check for missing arguments and commit changes to the db.
+            if(FALSE == $missingArg){    
+                $result = wp_update_user($updateFields);
+                if(TRUE == is_int($result)){
+                    echo "-- User successfully updated.\n";
+                }
+            }else{
+                echo $error;
+            }
+            
         }else{
             die("[!] You must specify a param to update. \n");
         }
@@ -218,7 +256,7 @@ class WpAdmin_User extends WpAdmin
        self::delete();
     }
     
-    public static function all()
+    public static function listAll()
     {
         $users = get_users();
         foreach($users as $k => $user){
