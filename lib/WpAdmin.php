@@ -99,7 +99,7 @@ class WpAdmin
         unset($args[0], $args[1], $args[2]);
         
         // Special conditional checks for user commands.
-        if('WpAdmin_User' == self::$_className && 'add' == self::$_methodName  || 'update' == self::$_methodName || 'delete' == self::$_methodName){
+        if('WpAdmin_User' == self::$_className && 'add' == self::$_methodName  || 'WpAdmin_User' == self::$_className && 'update' == self::$_methodName || 'WpAdmin_User' == self::$_className && 'delete' == self::$_methodName){
             if(preg_match('/^--.*$/', $args[3])){
                 echo "Usage: wpadmin user add steve --password=password --email=steve@example.com\n";
                 die("[!] You must specify a valid username\n");
