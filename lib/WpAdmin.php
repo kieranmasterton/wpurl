@@ -122,12 +122,24 @@ class WpAdmin
         
         // Loop through user input create array of key value pairs.
         foreach($args as $k => $value){
-            $pair = preg_split('/=/',$value);
-            $pair[0] = substr($pair[0], 2);
-            if("username" == $pair[0] && 'update' == self::$_methodName){
-                self::$_params['newusername'] = $pair[1];
+            
+            // Does the value contain an equals sign?
+            if (preg_match('/=/',$value)){
+                
+                // yes, the value does contain an equals sign. Therefore we need
+                // to split the value into two parts.
+                $pair = preg_split('/=/',$value);
+                
+                $pair[0] = substr($pair[0], 2);
+                if("username" == $pair[0] && 'update' == self::$_methodName){
+                    self::$_params['newusername'] = $pair[1];
+                }else{
+                    self::$_params[$pair[0]] = $pair[1];
+                }
             }else{
-                self::$_params[$pair[0]] = $pair[1];
+                // The value doesnt contrain an equals. Just add the value to
+                // the params array without a key.
+                self::$_params[] = $value;
             }
         }
         
