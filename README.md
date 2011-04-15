@@ -38,6 +38,10 @@ Updating the site title:
 
 $ wpadmin option update --blogname="New Site Title"
 
+Disable user commenting:
+
+$ wpadmin option update --default_comment_status=closed
+
 Features
 --------
 
