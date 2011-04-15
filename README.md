@@ -48,7 +48,11 @@ Settings: add, delete and update any key value pair in wp_options
 To Do
 ------
 
-Users: list users
+Users: list
+
+Settings: list 
+
+Posts & Pages: add, remove, publish and draft
 
 Plugins: list, activate and deactivate plugins
 
