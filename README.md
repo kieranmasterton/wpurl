@@ -10,7 +10,7 @@ Getting Started
 
 1. Grab yourself a copy of wpadmin:
 
-    git clone git@github.com:88mph/wpadmin.git
+    git clone https://github.com/88mph/wpadmin.git
 
 2. Make wpadmin executable:
 
@@ -32,7 +32,7 @@ $ wpadmin user add steve --password=password --email=steve@example.com
 
 Update a user role:
 
-$ wpadmin user role steve --role=editor
+$ wpadmin user update role steve --role=editor
 
 Updating the site title:
 
@@ -43,7 +43,7 @@ Features
 
 Users: add, delete and update user accounts inc. roles
 
-Settings: add, delete and update any any key value pair in wp_options
+Settings: add, delete and update any key value pair in wp_options
 
 To Do
 ------
