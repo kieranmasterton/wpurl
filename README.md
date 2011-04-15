@@ -32,7 +32,7 @@ $ wpadmin user add steve --password=password --email=steve@example.com
 
 Update a user role:
 
-$ wpadmin user update role steve --role=editor
+$ wpadmin user update steve --role=editor
 
 Updating the site title:
 
