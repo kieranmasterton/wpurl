@@ -45,16 +45,14 @@ $ wpadmin option update --default_comment_status=closed
 Features
 --------
 
-Users: add, delete and update user accounts inc. roles
+Users: list, add, delete and update user accounts inc. roles
 
-Settings: add, delete and update any key value pair in wp_options
+Options: add, delete and update any key value pair in wp_options
 
 To Do
 ------
 
-Users: list
-
-Settings: list 
+Options: list 
 
 Posts & Pages: add, remove, publish and draft
 
