@@ -28,11 +28,11 @@ cd /path/to/wordpress/docroot/
 
 Adding a new user:
 
-$ wpadmin user add steve --password=password --email=steve@example.com
+$ wpadmin user add --username=steve --password=password --email=steve@example.com
 
 Update a user role:
 
-$ wpadmin user update steve --role=editor
+$ wpadmin user update --username=steve --role=editor
 
 Updating the site title:
 

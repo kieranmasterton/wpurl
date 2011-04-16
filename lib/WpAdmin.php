@@ -171,21 +171,20 @@ class WpAdmin
 $str = <<<EOF
 Usage: wpadmin [options] [params]
 
-Options:
-    User functions:
+User functions:
     
-    user add {username} --email={email} --password={password}
-    user delete {username}
-    user update {username} --role={subscriber, editor, author, administrator}
-    user update {username} --password
-                           --email
-                           --display_name
-                           --nickname
-                           --first_name
-                           --last_name
-                           --description
+    user add --username={username} --email={email} --password={password}
+    user delete --username={username}
+    user update --username={username} --role={subscriber, editor, author, administrator}
+    user update --username={username} --password={value}
+                                      --email={value}
+                                      --display_name={value}
+                                      --nickname={value}
+                                      --first_name={value}
+                                      --last_name={value}
+                                      --description={value}
     
-    Option functions:
+Option functions:
     
     wpadmin option add --{key}={value}
     wpadmin option update --{key}={value}
