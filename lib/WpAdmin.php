@@ -106,20 +106,6 @@ class WpAdmin
         // Unset no longer required user input.
         unset($args[0], $args[1], $args[2]);
         
-        // Special conditional checks for user commands.
-        if('WpAdmin_User' == self::$_className && 'add' == self::$_methodName  
-                || 'WpAdmin_User' == self::$_className && 'update' == self::$_methodName 
-                || 'WpAdmin_User' == self::$_className && 'delete' == self::$_methodName){
-            if(preg_match('/^--.*$/', $args[3])){
-                echo "Usage: wpadmin user add steve --password=password --email=steve@example.com\n";
-                die("[!] You must specify a valid username\n");
-            }else{
-                self::$_params['username'] = $args[3];
-                unset($args[3]);
-            }
-
-        }
-        
         // Loop through user input create array of key value pairs.
         foreach($args as $k => $value){
             
@@ -131,11 +117,7 @@ class WpAdmin
                 $pair = preg_split('/=/',$value);
                 
                 $pair[0] = substr($pair[0], 2);
-                if("username" == $pair[0] && 'update' == self::$_methodName){
-                    self::$_params['newusername'] = $pair[1];
-                }else{
-                    self::$_params[$pair[0]] = $pair[1];
-                }
+                self::$_params[$pair[0]] = $pair[1];
             }else{
                 // The value doesnt contrain an equals. Just add the value to
                 // the params array without a key.

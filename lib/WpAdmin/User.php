@@ -52,6 +52,9 @@ class WpAdmin_User extends WpAdmin
      */
     static public function load($username)
     {
+        if(NULL == $username){
+            die("[!] You must specify a username.\n");
+        }
         $object = new WpAdmin_User($username);
         $userData = get_user_by('login', $username);
 
@@ -202,9 +205,6 @@ class WpAdmin_User extends WpAdmin
                             $missingArg = FALSE;
                             $updateFields[$key] = $value;
                         }
-                    break;
-                    case 'newusername':
-                        die("[!] Sorry WordPress does not allow you to change usernames. \n");
                     break;
                     case 'email':
                         if(NULL == $value){
