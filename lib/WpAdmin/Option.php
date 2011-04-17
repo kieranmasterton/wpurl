@@ -21,12 +21,13 @@
  * 
  * @example
  * 
- *      $ wpadmin option [command] --[option_name]="[value]"
- *
- *      $ wpadmin option add --blogname="My Cool Blog"
- *      $ wpadmin option update --siteurl="http://my-cool-blog.com"
+ *      To work with an existing option: 
+ *      $option = WpAdmin_Option::load('siteurl');
+ *      echo $option->getOptionData();
  * 
- *      $ wpadmin option delete --option=[option_name]
+ *      To create a new option:
+ *      $option = WpAdmin_Option::add(array('my_new_option' => 'My New Option Value'));
+ *      echo $option->getOptionData();
  * 
  * @since 0.0.1
  * @author  Jon Reeks http://twitter.com/jonreeks
@@ -46,7 +47,7 @@ class WpAdmin_Option extends WpAdmin
     private $_optionName = null;
     
     /**
-     * Array of option data.
+     * Array of option data returned from the database.
      *
      * @access private
      * @see WpAdmin_Option::setOptionData()
@@ -56,7 +57,7 @@ class WpAdmin_Option extends WpAdmin
     private $_optionData = array();
     
     /**
-     * Class constructor.
+     * Class constructor. Private for factory method.
      *
      * @access private
      * @param $optionName null|integer
@@ -68,12 +69,18 @@ class WpAdmin_Option extends WpAdmin
     }
     
     /**
-     * Factory method for creating an instance of WpAdmin_Option.
+     * Factory method for loading an existing option from the WordPress database 
+     * and then creating & returning an instance of WpAdmin_Option.
+     *
+     * @example
+     *  
+     *      $option = WpAdmin_Option::load('blogname');
+     *      echo $option->getOptionData();
      *
      * @static
-     * @access public
-     * @param $optionName null|integer
-     * @return My_Class
+     * @access  public
+     * @param   string   $optionName   option_name to load.
+     * @return  WpAdmin_Option
      */
     static public function load($optionName)
     {
@@ -85,13 +92,16 @@ class WpAdmin_Option extends WpAdmin
     }
     
     /**
-     * Factory method for inserting a new "option" into the database and then
-     * creating an instance of WpAdmin_Option.
+     * Factory method for inserting a new option into the WordPress database and 
+     * then creating & returning an instance of WpAdmin_Option.
+     *
+     * @example
+     *  
+     *      $option = WpAdmin_Option::add(array('option_name' => 'option_value'))
      *
      * @static
      * @access  public
-     * @param   $key    string  Option key
-     * @param   $value  string  Option value
+     * @param   array   $bind   In array('option_name' => 'option_value') format.
      * @return  WpAdmin_Option
      */
     static public function add($bind)
@@ -101,7 +111,7 @@ class WpAdmin_Option extends WpAdmin
         if(empty($bind)){
             echo '[!] To add an option you must specify an option\'s key & value in the following format:';
             echo "\n\n\t";
-            echo 'wpadmin add option --{option_key}={option_value}';
+            echo 'wpadmin add option --{option_name}={option_value}';
             echo "\n\n";
             return;
         }
@@ -119,8 +129,12 @@ class WpAdmin_Option extends WpAdmin
     }
     
     /**
-     * Factory method for inserting a new "option" into the database and then
-     * creating an instance of WpAdmin_Option.
+     * Updates an option's value in the WordPress options table.
+     *
+     * @example
+     *
+     *      $option = WpAdmin_Option::load('blogname');
+     *      $option->update('New Site Title');
      *
      * @static
      * @access  public
@@ -134,7 +148,7 @@ class WpAdmin_Option extends WpAdmin
         if(empty($bind)){
             echo '[!] To update an option you must specify an option\'s key & value in the following format:';
             echo "\n\n\t";
-            echo 'wpadmin update option --{option_key}={option_value}';
+            echo 'wpadmin update option --{option_name}={option_value}';
             echo "\n\n";
             return;
             return;
@@ -151,6 +165,19 @@ class WpAdmin_Option extends WpAdmin
         }
     }
     
+    /**
+     * Deletes an option from the WordPress options table.
+     *
+     * @example
+     *
+     *      $option = WpAdmin_Option::load('blogname');
+     *      $option->delete();
+     *
+     * @static
+     * @access  public
+     * @param   $bind array
+     * @return  void
+     */
     public function delete($bind)
     {
         unset($bind['primary']);
@@ -158,7 +185,7 @@ class WpAdmin_Option extends WpAdmin
         if(empty($bind)){
             echo '[!] To delete an option you must specify the option\'s key in the following format:';
             echo "\n\n\t";
-            echo 'wpadmin delete option --{option_key}';
+            echo 'wpadmin delete option --{option_name}';
             echo "\n\n";
             return;
             return;
