@@ -99,7 +99,9 @@ class WpAdmin_Option extends WpAdmin
         unset($bind['primary']);
         
         if(empty($bind)){
-            echo 'You must specify an option key. E.g. --my_key=My Value' . "\n";
+            echo '[!] You must specify an option key & value in the following format:';
+            echo "\n";
+            echo '    $ wpadmin add option --[option_key]=[option_value]' . "\n";
             return;
         }
         
