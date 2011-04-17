@@ -99,9 +99,10 @@ class WpAdmin_Option extends WpAdmin
         unset($bind['primary']);
         
         if(empty($bind)){
-            echo '[!] You must specify an option key & value in the following format:';
-            echo "\n";
-            echo '    $ wpadmin add option --[option_key]=[option_value]' . "\n";
+            echo '[!] To add an option you must specify an option\'s key & value in the following format:';
+            echo "\n\n\t";
+            echo 'wpadmin add option --{option_key}={option_value}';
+            echo "\n\n";
             return;
         }
         
@@ -131,7 +132,11 @@ class WpAdmin_Option extends WpAdmin
         unset($bind['primary']);
         
         if(empty($bind)){
-            echo 'You must specify an option key. E.g. --my_key=My Value' . "\n";
+            echo '[!] To update an option you must specify an option\'s key & value in the following format:';
+            echo "\n\n\t";
+            echo 'wpadmin update option --{option_key}={option_value}';
+            echo "\n\n";
+            return;
             return;
         }
         
@@ -151,7 +156,11 @@ class WpAdmin_Option extends WpAdmin
         unset($bind['primary']);
         
         if(empty($bind)){
-            echo 'You must specify an option key. E.g. --option=my_key' . "\n";
+            echo '[!] To delete an option you must specify the option\'s key in the following format:';
+            echo "\n\n\t";
+            echo 'wpadmin delete option --{option_key}';
+            echo "\n\n";
+            return;
             return;
         }
         
