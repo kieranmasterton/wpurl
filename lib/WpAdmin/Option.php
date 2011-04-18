@@ -89,8 +89,11 @@ class WpAdmin_Option extends WpAdmin
      */
     static public function load($optionName, array $optionData = array())
     {
+        // Instantiate a new WpAdmin_Option object,
         $object = new WpAdmin_Option($optionName);
         
+        // If we havent been passeed an array of option data then query the
+        // database for it. Otherwise just set it from what'given.
         if (empty($optionData)){
             $object->setOptionData($object->queryOptionData($optionName));
         }else{
