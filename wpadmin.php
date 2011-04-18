@@ -42,6 +42,7 @@ if(true == is_readable('wp-load.php')){
     require_once WPADMIN_LIBS_PATH . '/WpAdmin.php';
     require_once WPADMIN_LIBS_PATH . '/WpAdmin/User.php';
     require_once WPADMIN_LIBS_PATH . '/WpAdmin/Option.php';
+    require_once WPADMIN_LIBS_PATH . '/Console/Table.php';
 
     // Run main WpAdmin::exec() method.
     WpAdmin::exec($argv);
