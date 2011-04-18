@@ -73,7 +73,7 @@ class WpAdmin
         switch($method){
             case 'add':
                 // Using eval() as opposed to $class::$method() for the benefit
-                // of users with PHP version <= 5.2.0. 
+                // of users with PHP version < 5.3.0. 
                 eval("\$object = " . $class . "::add(self::\$_params);");
             break;
             case 'list':
