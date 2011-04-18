@@ -301,7 +301,11 @@ class WpAdmin_Option extends WpAdmin
     {
         global $wpdb;
         
-        $stmt  = 'SELECT `option_id`, `blog_id`, `option_name`, `option_value`, `autoload` ';
+        $stmt  = 'SELECT `option_id`, 
+                            `blog_id`, 
+                            `option_name`, 
+                            `option_value`, 
+                            `autoload` ';
         $stmt .= 'FROM `' . $wpdb->options . '` ';
         $stmt .= 'WHERE `option_name` = \'' . mysql_real_escape_string($optionName) . '\' ';
         $stmt .= 'LIMIT 1';
@@ -319,10 +323,33 @@ class WpAdmin_Option extends WpAdmin
     {
         global $wpdb;
         
-        $stmt  = 'SELECT `option_id`, `blog_id`, `option_name`, `option_value`, `autoload` ';
+        $stmt  = 'SELECT `option_id`, 
+                            `blog_id`, 
+                            `option_name`, 
+                            `option_value`, 
+                            `autoload` ';
         $stmt .= 'FROM `' . $wpdb->options . '` ';
         $stmt .= 'ORDER BY `option_name` ';
         
         return $wpdb->get_results($stmt, ARRAY_A);
+    }
+    
+    /**
+     * Returns an array of column headings that match the order of 
+     * .WpAdmin_Option::queryOptionsData(). This is used for the tabular
+     * output of $ wpadmin option list.
+     *
+     * @access  public
+     * @return  array
+     */
+    public function getColumnHeaders()
+    {
+        $base = array('option_id', 
+                        'blog_id', 
+                        'option_name', 
+                        'option_value', 
+                        'autoload');
+        
+        return $base;
     }
 }
