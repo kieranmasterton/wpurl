@@ -44,7 +44,7 @@ if(true == is_readable('wp-load.php')){
     require_once WPADMIN_LIBS_PATH . '/WpAdmin/Option.php';
 
 
-    if(5.3 < (int)phpversion()){
+    if(5.3 > (int)phpversion()){
         // Run main WpAdmin::execCompat() method.
         WpAdmin::exec($argv);
     }else{
