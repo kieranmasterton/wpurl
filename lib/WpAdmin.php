@@ -90,6 +90,44 @@ class WpAdmin
     }
     
     /**
+     * Function invoked from prompt if PHP version is <= 5.3.0.
+     *
+     * @static
+     * @access  public
+     * @param   $args array
+     * @return  void
+     */
+    public static function execCompat($args)
+    {
+        // Parse user input create set class properties.
+        self::_parseOptions($args);
+
+        // Check class exists and instantiate object & call method.
+        $class      = self::$_className;
+        $method     = self::$_methodName;
+        
+        // Decide how to call the class / method.
+        switch($method){
+            case 'add':
+                eval("$object = ". $class . "::add(self::$_params);";
+            break;
+            case 'list':
+                eval("$object = " . $class . "::listAll(self::$_params);";
+            break;
+            default:
+                // Does the class and method requested exist?
+                if(method_exists($class, $method)){
+                    eval("$object = " . $class . "::load(self::$_params['primary']);";
+                    $object->$method(self::$_params);
+                }else{
+                    // Else class / method not found, display help.
+                    self::displayHelp();
+                }
+            break;
+        }
+    }
+    
+    /**
      * Parse the arguments send from the command line.
      *
      * @static
