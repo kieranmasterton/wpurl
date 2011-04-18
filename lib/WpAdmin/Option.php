@@ -82,11 +82,15 @@ class WpAdmin_Option extends WpAdmin
      * @param   string   $optionName   option_name to load.
      * @return  WpAdmin_Option
      */
-    static public function load($optionName)
+    static public function load($optionName, array $optionData = array())
     {
         $object = new WpAdmin_Option($optionName);
         
-        $object->setOptionData($object->queryData($optionName));
+        if (empty($optionData)){
+            $object->setOptionData($object->queryOptionData($optionName));
+        }else{
+            $object->setOptionData($optionData);
+        }
         
         return $object;
     }
@@ -248,15 +252,26 @@ class WpAdmin_Option extends WpAdmin
         return $this->_optionData;
     }
     
-    public function queryData($optionName)
+    public function queryOptionData($optionName)
     {
         global $wpdb;
         
-        $stmt  = 'SELECT * ';
+        $stmt  = 'SELECT `option_id`, `blog_id`, `option_name`, `option_value`, `autoload` ';
         $stmt .= 'FROM `' . $wpdb->options . '` ';
         $stmt .= 'WHERE `option_name` = \'' . mysql_real_escape_string($optionName) . '\' ';
         $stmt .= 'LIMIT 1';
         
         return $wpdb->get_row($stmt, ARRAY_A);
+    }
+    
+    public function queryOptionsData()
+    {
+        global $wpdb;
+        
+        $stmt  = 'SELECT `option_id`, `blog_id`, `option_name`, `option_value`, `autoload` ';
+        $stmt .= 'FROM `' . $wpdb->options . '` ';
+        $stmt .= 'ORDER BY `option_name` ';
+        
+        return $wpdb->get_results($stmt, ARRAY_A);
     }
 }
