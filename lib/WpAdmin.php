@@ -80,7 +80,7 @@ class WpAdmin
             default:
                 // Does the class and method requested exist?
                 if(method_exists($class, $method)){
-                    eval("$object = " . $class . "::load(self::\$_params['primary']);");
+                    eval("\$object = " . $class . "::load(self::\$_params['primary']);");
                     $object->$method(self::$_params);
                 }else{
                     // Else class / method not found, display help.
