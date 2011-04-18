@@ -56,7 +56,7 @@ class WpAdmin
      *
      * @static
      * @access  public
-     * @param   $args array
+     * @param   array $args
      * @return  void
      */
     public static function exec($args)
@@ -68,24 +68,71 @@ class WpAdmin
         $class      = self::$_className;
         $method     = self::$_methodName;
         
-        // Decide how to call the class / method.
+        // Decide how to call the class / method & in special cases what to do
+        // with the returned data.
         switch($method){
+            
+            // Add option.
             case 'add':
-                $object = $class::add(self::$_params);
-            break;
+                // Using eval() as opposed to $class::$method() for the benefit
+                // of users with PHP version < 5.3.0. 
+                eval("\$object = " . $class . "::add(self::\$_params);");
+                break;
+            
+            // List option.
             case 'list':
-                $object = $class::listAll(self::$_params);
+                
+                // Fetch an array of objects of type $class.
+                eval("\$objects = " . $class . "::listAll(self::\$_params);");
+                
+                // Create an instance of Console_Table for the output formatting.
+                $tbl = new Console_Table(CONSOLE_TABLE_ALIGN_LEFT, 
+                                            CONSOLE_TABLE_BORDER_ASCII, 
+                                            1,
+                                            'UTF-8');
+                
+                // Create the headers for the table.
+                $tbl->setHeaders($class::getColumnHeaders());
+                
+                // Loop through each of the returned objects.
+                foreach($objects as $object){
+                    
+                    // Create an array to hold the row data for 
+                    // Console_Table::addRow().
+                    $rowData = array();
+                    
+                    // Loop through each of the key => value pairs returned as
+                    // we need to truncate the length of long strings so that
+                    // we dont get "Allowed memory size exhausted" errors.
+                    foreach($object->getOptionData() as $key => $value){
+                        if (strlen($value) > 50){
+                            $value = substr($value, 0, 50) . '[...]';
+                        }
+                        
+                        // Add the data to the row data array.
+                        $rowData[$key] = $value;
+                    }
+                    
+                    // Add the row to Console_Table.
+                    $tbl->addRow($rowData);
+                }
+                
+                // Output the table.
+                echo $tbl->getTable();
+                
             break;
+            
+            // Default option.
             default:
                 // Does the class and method requested exist?
                 if(method_exists($class, $method)){
-                    $object = $class::load(self::$_params['primary']);
+                    eval("\$object = " . $class . "::load(self::\$_params['primary']);");
                     $object->$method(self::$_params);
                 }else{
                     // Else class / method not found, display help.
                     self::displayHelp();
                 }
-            break;
+                break;
         }
     }
     
@@ -94,7 +141,7 @@ class WpAdmin
      *
      * @static
      * @access  private
-     * @param   $args array
+     * @param   array $args
      * @return  void
      */
     private static function _parseOptions($args)
@@ -146,7 +193,7 @@ class WpAdmin
      *
      * @static
      * @access  public
-     * @param   $args array
+     * @param   array $args
      * @return  void
      */
     public static function _parseYesNo($response)
