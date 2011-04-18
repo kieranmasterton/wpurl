@@ -43,14 +43,7 @@ if(true == is_readable('wp-load.php')){
     require_once WPADMIN_LIBS_PATH . '/WpAdmin/User.php';
     require_once WPADMIN_LIBS_PATH . '/WpAdmin/Option.php';
 
-
-    if(5.3 >= (int)phpversion()){
-        // Run main WpAdmin::execCompat() method.
-        WpAdmin::exec($argv);
-    }else{
-        // Run main WpAdmin::exec() method.
-        WpAdmin::execCompat($argv);
-    }
+    WpAdmin::exec($argv);
     
 }else{
     die("Either this is not a WordPress document root or you do not have 
