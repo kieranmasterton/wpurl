@@ -109,15 +109,15 @@ class WpAdmin
         // Decide how to call the class / method.
         switch($method){
             case 'add':
-                eval("$object = ". $class . "::add(self::$_params);";
+                eval("\$object = ". $class . "::add(self::\$_params);");
             break;
             case 'list':
-                eval("$object = " . $class . "::listAll(self::$_params);";
+                eval("\$object = " . $class . "::listAll(self::\$_params);");
             break;
             default:
                 // Does the class and method requested exist?
                 if(method_exists($class, $method)){
-                    eval("$object = " . $class . "::load(self::$_params['primary']);";
+                    eval("$object = " . $class . "::load(self::\$_params['primary']);");
                     $object->$method(self::$_params);
                 }else{
                     // Else class / method not found, display help.
