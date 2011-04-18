@@ -23,11 +23,11 @@
  * 
  *      To work with an existing option: 
  *      $option = WpAdmin_Option::load('siteurl');
- *      echo $option->getOptionData();
+ *      echo $option->getOptionName();
  * 
  *      To create a new option:
  *      $option = WpAdmin_Option::add(array('my_new_option' => 'My New Option Value'));
- *      echo $option->getOptionData();
+ *      echo $option->getOptionName();
  * 
  * @since 0.0.1
  * @author  Jon Reeks http://twitter.com/jonreeks
@@ -75,7 +75,7 @@ class WpAdmin_Option extends WpAdmin
      * @example
      *  
      *      $option = WpAdmin_Option::load('blogname');
-     *      echo $option->getOptionData();
+     *      echo $option->getOptionName();
      *
      * @static
      * @access  public
@@ -89,7 +89,7 @@ class WpAdmin_Option extends WpAdmin
      */
     static public function load($optionName, array $optionData = array())
     {
-        // Instantiate a new WpAdmin_Option object,
+        // Instantiate a new WpAdmin_Option object.
         $object = new WpAdmin_Option($optionName);
         
         // If we havent been passeed an array of option data then query the
@@ -100,6 +100,7 @@ class WpAdmin_Option extends WpAdmin
             $object->setOptionData($optionData);
         }
         
+        // Return the object.
         return $object;
     }
     
@@ -178,7 +179,7 @@ class WpAdmin_Option extends WpAdmin
      *
      * @static
      * @access  public
-     * @param   $bind array
+     * @param   array $bind
      * @return  void
      */
     public function update($bind)
@@ -215,7 +216,7 @@ class WpAdmin_Option extends WpAdmin
      *
      * @static
      * @access  public
-     * @param   $bind array
+     * @param   array $bind
      * @return  void
      */
     public function delete($bind)
