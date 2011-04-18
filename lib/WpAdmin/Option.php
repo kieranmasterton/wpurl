@@ -141,6 +141,34 @@ class WpAdmin_Option extends WpAdmin
     }
     
     /**
+     * Fetchs all options from the WordPress database & then returns them 
+     * as an array of WpAdmin_Option objects.
+     *
+     * @example
+     *  
+     *      $options = WpAdmin_Option::listAll();
+     *      foreach($options as $option){
+     *          echo $option->getOptionName();
+     *      }
+     *
+     * @static
+     * @access  public
+     * @return  array   Array of WpAdmin_Option objects.
+     */
+    static public function listAll()
+    {
+        $options = self::queryOptionsData();
+        
+        $base = array();
+        
+        foreach ($options as $option){
+            $base[] = self::load($option['option_name'], $option);
+        }
+        
+        return $base; 
+    }
+    
+    /**
      * Updates an option's value in the WordPress options table.
      *
      * @example
