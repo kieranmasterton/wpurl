@@ -79,7 +79,12 @@ class WpAdmin_Option extends WpAdmin
      *
      * @static
      * @access  public
-     * @param   string   $optionName   option_name to load.
+     * @param   string  $optionName     option_name to load.
+     * @param   array   $optionData     array of option data to set against
+     *                                  @link WpAdmin_Option::_optionData for
+     *                                  use with WpAdmin_Option::getOptionData()
+     *                                  If this parameter is omitted then the data
+     *                                  is fetched from the database.
      * @return  WpAdmin_Option
      */
     static public function load($optionName, array $optionData = array())
@@ -252,6 +257,14 @@ class WpAdmin_Option extends WpAdmin
         return $this->_optionData;
     }
     
+    /**
+     * Queries the WordPress options table for an option with an option_name the
+     * same the $optionName.
+     *
+     * @access  public
+     * @param   string  $optionName
+     * @return  array
+     */
     public function queryOptionData($optionName)
     {
         global $wpdb;
@@ -264,6 +277,12 @@ class WpAdmin_Option extends WpAdmin
         return $wpdb->get_row($stmt, ARRAY_A);
     }
     
+    /**
+     * Queries the WordPress options table for all options.
+     *
+     * @access  public
+     * @return  array
+     */
     public function queryOptionsData()
     {
         global $wpdb;
