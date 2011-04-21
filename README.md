@@ -1,3 +1,6 @@
+NOTE: VERSION 0.0.2 IS UNRELEASED AND UNTESTED!!!
+------------------------------------------------- 
+
 Welcome to wpadmin
 ------------------
 
