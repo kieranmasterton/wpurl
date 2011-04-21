@@ -104,7 +104,7 @@ class WpAdmin
                     // Loop through each of the key => value pairs returned as
                     // we need to truncate the length of long strings so that
                     // we dont get "Allowed memory size exhausted" errors.
-                    foreach($object->getOptionData() as $key => $value){
+                    foreach($object->getData() as $key => $value){
                         if (strlen($value) > 50){
                             $value = substr($value, 0, 50) . '[...]';
                         }

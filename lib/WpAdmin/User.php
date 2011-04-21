@@ -27,10 +27,29 @@
  
 class WpAdmin_User extends WpAdmin
 {
+    /**
+     * Username.
+     *
+     * A valid username value.(Options database table column)
+     *
+     * @access private
+     * @see WpAdmin_User::setUsername()
+     * @see WpAdmin_User::getUsername()
+     * @param  string
+     */
     private $_username;
-    private $_userData;
     
-/**
+    /**
+     * User object of data returned from the database.
+     *
+     * @access private
+     * @see WpAdmin_User::setData()
+     * @see WpAdmin_User::getData()
+     * @param  array
+     */
+    private $_data = false;
+    
+    /**
      * Class constructor.
      *
      * @access private
@@ -50,20 +69,28 @@ class WpAdmin_User extends WpAdmin
      * @param $username null|integer
      * @return My_Class
      */
-    static public function load($username)
+    static public function load($username, array $data = array())
     {
         if(NULL == $username){
             die("[!] You must specify a username.\n");
         }
+        
         $object = new WpAdmin_User($username);
-        $userData = get_user_by('login', $username);
-
-        if(FALSE == $userData){
-            die("[!] Username \"" . $username ."\" is not valid. \n");
+        
+        // If we havent been passeed an array of option data then query the
+        // database for it. Otherwise just set it from whats given.
+        if (empty($data)){
+            $object->setData($object->queryData($username));
+            
+            if(false == $object->getData()){
+                die("[!] Username \"" . $username ."\" is not valid. \n");
+            }
+            
         }else{
-            $object->setUserData($userData);
-            return $object;
+            $object->setData($data);
         }
+        
+        return $object;
     }
     
     /**
@@ -103,6 +130,34 @@ class WpAdmin_User extends WpAdmin
     }
     
     /**
+     * Fetchs all users from the WordPress database & then returns them 
+     * as an array of WpAdmin_User objects.
+     *
+     * @example
+     *  
+     *      $users = WpAdmin_User::listAll();
+     *      foreach($users as $user){
+     *          echo $user->getUsername();
+     *      }
+     *
+     * @static
+     * @access  public
+     * @return  array   Array of WpAdmin_User objects.
+     */
+    static public function listAll()
+    {
+        $users = self::queryAllData();
+        
+        $base = array();
+        
+        foreach ($users as $user){
+            $base[] = self::load($user->user_login, $user);
+        }
+        
+        return $base; 
+    }
+    
+    /**
      * Setter for {@link $_username}.
      *
      * @access public 
@@ -112,18 +167,6 @@ class WpAdmin_User extends WpAdmin
     public function setUsername($username = null)
     {
         $this->_username = $username;
-    }
-    
-    /**
-     * Setter for {@link $_userData}.
-     *
-     * @access public 
-     * @param $userData null|object 
-     * @return void
-     */
-    public function setUserData($userData = null)
-    {
-        $this->_userData = $userData;
     }
     
     /**
@@ -138,14 +181,26 @@ class WpAdmin_User extends WpAdmin
     }
     
     /**
+     * Setter for {@link $_data}.
+     *
+     * @access public 
+     * @param $data null|object 
+     * @return void
+     */
+    public function seData($data = null)
+    {
+        $this->_data = $data;
+    }
+    
+    /**
      * Getter for {@link $_username}.
      *
      * @access public 
      * @return integer|object
      */
-    public function getUserData()
+    public function getData()
     {
-        return $this->_userData;
+        return $this->_data;
     }
     
     
@@ -157,13 +212,13 @@ class WpAdmin_User extends WpAdmin
      */
     public function delete(array $options = array())
     {
-        $userData = $this->getUserData();
+        $data = $this->getData();
         
-        fwrite(STDOUT, "Are you sure you wish to delete the user with the following email address? (Y/N) " . $userData->user_email . ": ");
+        fwrite(STDOUT, "Are you sure you wish to delete the user with the following email address? (Y/N) " . $data->user_email . ": ");
         $response = trim(fgets(STDIN));
         
         if(TRUE == parent::_parseYesNo($response)){
-            $result = wp_delete_user($userData->ID);
+            $result = wp_delete_user($data->ID);
             
             if(TRUE == $result){
                 echo "-- User successfully deleted. \n";
@@ -182,7 +237,7 @@ class WpAdmin_User extends WpAdmin
     public function update(array $options = array())
     {
         // Get user data.
-        $userData = $this->getUserData();
+        $data = $this->getData();
         
         // These aren't needed.
         unset($options['username'], $options['primary']);
@@ -190,7 +245,7 @@ class WpAdmin_User extends WpAdmin
         // Check to make sure some options have been submitted.
         if(!empty($options)){
             
-            $updateFields = array('ID' => $userData->ID);
+            $updateFields = array('ID' => $data->ID);
             
             // Loop through options.
             foreach($options as $key => $value){
@@ -256,12 +311,47 @@ class WpAdmin_User extends WpAdmin
        self::delete();
     }
     
-    public static function listAll()
+    /**
+     * Queries the WordPress user table for a user with a username the
+     * same the $username.
+     *
+     * @access  public
+     * @param   string  $username
+     * @return  array
+     */
+    public function queryData($username)
     {
-        $users = get_users();
-        foreach($users as $k => $user){
-            echo $user->user_login . " - " . $user->user_email . "\n";
-        }
+        return get_user_by('login', $username);
+    }
+    
+    /**
+     * Queries the WordPress user table for all users.
+     *
+     * @access  public
+     * @return  array
+     */
+    public function queryAllData()
+    {
+        return get_users();
+    }
+    
+    /**
+     * Returns an array of column headings that match the order of 
+     * .WpAdmin_User::queryAllData(). This is used for the tabular
+     * output of $ wpadmin user list.
+     *
+     * @access  public
+     * @return  array
+     */
+    public function getColumnHeaders()
+    {
+        $base = array('ID', 
+                        'Username',
+                        'Email',
+                        'Nice name', 
+                        'Display name');
+        
+        return $base;
     }
     
 }

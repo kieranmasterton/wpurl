@@ -50,11 +50,11 @@ class WpAdmin_Option extends WpAdmin
      * Array of option data returned from the database.
      *
      * @access private
-     * @see WpAdmin_Option::setOptionData()
-     * @see WpAdmin_Option::getOptionData()
+     * @see WpAdmin_Option::setData()
+     * @see WpAdmin_Option::getData()
      * @param  array
      */
-    private $_optionData = array();
+    private $_data = array();
     
     /**
      * Class constructor. Private for factory method.
@@ -80,24 +80,24 @@ class WpAdmin_Option extends WpAdmin
      * @static
      * @access  public
      * @param   string  $optionName     option_name to load.
-     * @param   array   $optionData     array of option data to set against
-     *                                  @link WpAdmin_Option::_optionData for
-     *                                  use with WpAdmin_Option::getOptionData()
+     * @param   array   $data     array of option data to set against
+     *                                  @link WpAdmin_Option::_data for
+     *                                  use with WpAdmin_Option::getData()
      *                                  If this parameter is omitted then the data
      *                                  is fetched from the database.
      * @return  WpAdmin_Option
      */
-    static public function load($optionName, array $optionData = array())
+    static public function load($optionName, array $data = array())
     {
         // Instantiate a new WpAdmin_Option object.
         $object = new WpAdmin_Option($optionName);
         
         // If we havent been passeed an array of option data then query the
         // database for it. Otherwise just set it from what'given.
-        if (empty($optionData)){
-            $object->setOptionData($object->queryOptionData($optionName));
+        if (empty($data)){
+            $object->setData($object->queryData($optionName));
         }else{
-            $object->setOptionData($optionData);
+            $object->setData($data);
         }
         
         // Return the object.
@@ -156,9 +156,22 @@ class WpAdmin_Option extends WpAdmin
      * @access  public
      * @return  array   Array of WpAdmin_Option objects.
      */
-    static public function listAll()
+    static public function listAll($params)
     {
-        $options = self::queryOptionsData();
+        $addStmt = null;
+        if (isset($params['option_id'])){
+            $addStmt = 'WHERE `option_id` = \'' . mysql_real_escape_string($params['option_id']) . '\' ';
+        }elseif(isset($params['option_name'])){
+            $addStmt = 'WHERE `option_name` = \'' . mysql_real_escape_string($params['option_name']) . '\' ';
+        }elseif(isset($params['blog_id'])){
+            $addStmt = 'WHERE `blog_id` = \'' . mysql_real_escape_string($params['blog_id']) . '\' ';
+        }elseif(isset($params['option_value'])){
+            $addStmt = 'WHERE `option_value` = \'' . mysql_real_escape_string($params['option_value']) . '\' ';
+        }elseif(isset($params['autoload'])){
+            $addStmt = 'WHERE `autoload` = \'' . mysql_real_escape_string($params['autoload']) . '\' ';
+        }
+        
+        $options = self::queryAllData($addStmt);
         
         $base = array();
         
@@ -267,26 +280,26 @@ class WpAdmin_Option extends WpAdmin
     }
     
     /**
-     * Setter for {@link $_optionData}.
+     * Setter for {@link $_data}.
      *
      * @access public
      * @param $data array
      * @return void
      */
-    public function setOptionData($optionData = array())
+    public function setData($data = array())
     {
-        $this->_optionData = $optionData;
+        $this->_data = $data;
     }
     
     /**
-     * Getter for {@link $_optionData}.
+     * Getter for {@link $_data}.
      *
      * @access public
      * @return void
      */
-    public function getOptionData()
+    public function getData()
     {
-        return $this->_optionData;
+        return $this->_data;
     }
     
     /**
@@ -297,7 +310,7 @@ class WpAdmin_Option extends WpAdmin
      * @param   string  $optionName
      * @return  array
      */
-    public function queryOptionData($optionName)
+    public function queryData($optionName)
     {
         global $wpdb;
         
@@ -319,7 +332,7 @@ class WpAdmin_Option extends WpAdmin
      * @access  public
      * @return  array
      */
-    public function queryOptionsData()
+    public function queryAllData($addStmt = null)
     {
         global $wpdb;
         
@@ -329,6 +342,7 @@ class WpAdmin_Option extends WpAdmin
                             `option_value`, 
                             `autoload` ';
         $stmt .= 'FROM `' . $wpdb->options . '` ';
+        $stmt .= $addStmt;
         $stmt .= 'ORDER BY `option_name` ';
         
         return $wpdb->get_results($stmt, ARRAY_A);
@@ -336,7 +350,7 @@ class WpAdmin_Option extends WpAdmin
     
     /**
      * Returns an array of column headings that match the order of 
-     * .WpAdmin_Option::queryOptionsData(). This is used for the tabular
+     * .WpAdmin_Option::queryAllData(). This is used for the tabular
      * output of $ wpadmin option list.
      *
      * @access  public
