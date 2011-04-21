@@ -347,9 +347,9 @@ class WpAdmin_User extends WpAdmin
     {
         $base = array('ID', 
                         'user_login (username)',
-                        'user_pass',
+                        'user_pass (password)',
                         'user_nicename',
-                        'user_email',
+                        'user_email (email)',
                         'user_url',
                         'user_registered',
                         'user_activation_key',
