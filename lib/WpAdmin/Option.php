@@ -317,6 +317,8 @@ class WpAdmin_Option extends WpAdmin
      * Queries the WordPress options table for all options.
      *
      * @access  public
+     * @param   array   $whereBind  Additional key => value pairs that will be
+     *                              converted into MySQL WHERE clauses.
      * @return  array
      */
     public function queryAllData(array $whereBind = array())
