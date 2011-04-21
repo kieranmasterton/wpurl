@@ -45,6 +45,14 @@ Disable user commenting:
 
 $ wpadmin option update --default_comment_status=closed
 
+Update the site url:
+
+$ wpadmin option update --siteurl=http://example.com
+
+Update the site url globally inc. serialised data:
+
+$ wpadmin option update --siteurl=http://example.com --global
+
 Features
 --------
 
