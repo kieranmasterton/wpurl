@@ -13,7 +13,7 @@ Getting Started
 
 1. Grab yourself a copy of wpadmin:
 
-    git clone https://github.com/88mph/wpadmin.git OR wget https://github.com/88mph/wpadmin/tarball/master
+    git clone https://github.com/88mph/wpadmin.git
 
 2. Make wpadmin executable:
 
