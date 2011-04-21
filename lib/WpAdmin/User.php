@@ -69,7 +69,7 @@ class WpAdmin_User extends WpAdmin
      * @param $username null|integer
      * @return My_Class
      */
-    static public function load($username, array $data = array())
+    static public function load($username, stdClass $data = null)
     {
         if(NULL == $username){
             die("[!] You must specify a username.\n");
@@ -187,7 +187,7 @@ class WpAdmin_User extends WpAdmin
      * @param $data null|object 
      * @return void
      */
-    public function seData($data = null)
+    public function setData($data = null)
     {
         $this->_data = $data;
     }

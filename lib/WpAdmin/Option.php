@@ -158,20 +158,7 @@ class WpAdmin_Option extends WpAdmin
      */
     static public function listAll($params)
     {
-        $addStmt = null;
-        if (isset($params['option_id'])){
-            $addStmt = 'WHERE `option_id` = \'' . mysql_real_escape_string($params['option_id']) . '\' ';
-        }elseif(isset($params['option_name'])){
-            $addStmt = 'WHERE `option_name` = \'' . mysql_real_escape_string($params['option_name']) . '\' ';
-        }elseif(isset($params['blog_id'])){
-            $addStmt = 'WHERE `blog_id` = \'' . mysql_real_escape_string($params['blog_id']) . '\' ';
-        }elseif(isset($params['option_value'])){
-            $addStmt = 'WHERE `option_value` = \'' . mysql_real_escape_string($params['option_value']) . '\' ';
-        }elseif(isset($params['autoload'])){
-            $addStmt = 'WHERE `autoload` = \'' . mysql_real_escape_string($params['autoload']) . '\' ';
-        }
-        
-        $options = self::queryAllData($addStmt);
+        $options = self::queryAllData($params);
         
         $base = array();
         
@@ -332,9 +319,15 @@ class WpAdmin_Option extends WpAdmin
      * @access  public
      * @return  array
      */
-    public function queryAllData($addStmt = null)
+    public function queryAllData(array $whereBind = array())
     {
         global $wpdb;
+        
+        $allowedWhereFields = array('option_id',
+                                        'blog_id',
+                                        'option_name',
+                                        'option_value',
+                                        'autoload');
         
         $stmt  = 'SELECT `option_id`, 
                             `blog_id`, 
@@ -342,7 +335,12 @@ class WpAdmin_Option extends WpAdmin
                             `option_value`, 
                             `autoload` ';
         $stmt .= 'FROM `' . $wpdb->options . '` ';
-        $stmt .= $addStmt;
+        $stmt .= 'WHERE 1 ';
+        foreach($whereBind as $key => $value){
+            if (in_array($key, $allowedWhereFields)){
+                $stmt .= 'AND `' . $key . '` = \'' . mysql_real_escape_string($value) . '\' ';
+            }
+        }
         $stmt .= 'ORDER BY `option_name` ';
         
         return $wpdb->get_results($stmt, ARRAY_A);
