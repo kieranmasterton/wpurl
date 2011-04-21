@@ -6,14 +6,14 @@ Welcome to wpadmin
 
 wpadmin is a command line tool for administering Wordpress. It is very much still in development and more features will be added over the coming weeks. Please handle with extreme caution as the tool is not extensively tested in the wild. 
 
-Version: 0.0.1
+Version: 0.0.2
 
 Getting Started
 ---------------
 
 1. Grab yourself a copy of wpadmin:
 
-    git clone https://github.com/88mph/wpadmin.git
+    git clone https://github.com/88mph/wpadmin.git OR wget https://github.com/88mph/wpadmin/tarball/master
 
 2. Make wpadmin executable:
 
