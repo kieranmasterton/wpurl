@@ -79,7 +79,7 @@ class WpAdmin_User extends WpAdmin
         
         // If we havent been passeed an array of option data then query the
         // database for it. Otherwise just set it from whats given.
-        if (empty($data)){
+        if (!is_a($data, 'stdClass')){
             $object->setData($object->queryData($username));
             
             if(false == $object->getData()){
@@ -346,10 +346,15 @@ class WpAdmin_User extends WpAdmin
     public function getColumnHeaders()
     {
         $base = array('ID', 
-                        'Username',
-                        'Email',
-                        'Nice name', 
-                        'Display name');
+                        'user_login (username)',
+                        'user_pass',
+                        'user_nicename',
+                        'user_email',
+                        'user_url',
+                        'user_registered',
+                        'user_activation_key',
+                        'user_status', 
+                        'display_name');
         
         return $base;
     }
