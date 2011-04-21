@@ -166,9 +166,11 @@ class WpAdmin
                 $pair[0] = substr($pair[0], 2);
                 self::$_params[$pair[0]] = $pair[1];
             }else{
-                // The value doesnt contrain an equals. Just add the value to
-                // the params array without a key.
-                self::$_params[] = $value;
+                // The value doesnt contrain an equals. Just add the key to
+                // the params array with a value of true.
+                $value = substr($value, 2);
+                self::$_params[$value] = TRUE;
+                
             }
         }
         

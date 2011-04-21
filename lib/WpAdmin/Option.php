@@ -192,16 +192,19 @@ class WpAdmin_Option extends WpAdmin
             echo 'wpadmin update option --{option_name}={option_value}';
             echo "\n\n";
             return;
-            return;
         }
         
-        // Add the option.
-        foreach($bind as $key => $value){
-            $res = update_option($key, $value);
-            if (true === $res){
-                echo "-- Option '" . $key . "' successfully updated.\n";
-            }else{
-                echo "[!] Option '" . $key . "' not updated. Does it exist? Is the value already '" . $value . "'? \n";
+        if(array_key_exists('siteurl', $bind) && array_key_exists('global', $bind)){
+            self::_updateSiteurlGlobal($bind['siteurl']);
+        }else{
+            // Add the option.
+            foreach($bind as $key => $value){
+                $res = update_option($key, $value);
+                if (true === $res){
+                    echo "-- Option '" . $key . "' successfully updated.\n";
+                }else{
+                    echo "[!] Option '" . $key . "' not updated. Does it exist? Is the value already '" . $value . "'? \n";
+                }
             }
         }
     }
@@ -228,7 +231,6 @@ class WpAdmin_Option extends WpAdmin
             echo "\n\n\t";
             echo 'wpadmin delete option --{option_name}';
             echo "\n\n";
-            return;
             return;
         }
         
@@ -366,4 +368,152 @@ class WpAdmin_Option extends WpAdmin
         
         return $base;
     }
+    
+    
+    /**
+     * Globally updates the site url across the entire database including 
+     * all serialised data.
+     *
+     * @access  private
+     * @return  void
+     * @author  Kieran Masterton http://twitter.com/kieranmasterton
+     * @author  David Coveney of Interconnect IT Ltd (UK) for original idea.
+     */
+    private static function _updateSiteurlGlobal($newSiteurl)
+    {
+        // Ensure that we prompt the user to add a protocol prefix to their 
+        // site name.
+        if(!preg_match('/^http(s?):\/\//', $newSiteurl)){
+            die("[!] You must prefix your --siteurl option with http:// or https:// \n");
+        }
+        
+        global $wpdb;
+        
+        // Get the old site url from the database.
+        $oldSiteurlRow = $wpdb->get_row('SELECT option_value from ' . $wpdb->prefix . 'options WHERE option_name = "siteurl"', ARRAY_A);
+        $oldSiteurl = $oldSiteurlRow['option_value'];
+        
+        // Check that the two site url are not identical
+        if($oldSiteurl == $newSiteurl){
+            die("[!] Your site url is already set to: " . $newSiteurl . "\n");
+        }
+        
+        // Array of all relervant WordPress tables.
+        $tables = array('commentmeta', 'comments', 'links', 'options', 'postmeta', 
+                        'posts', 'terms', 'term_relationships', 'taxonomy', 'usermeta',
+                        'users');
+        
+        // Loop through tables.
+        foreach($tables as $table){
+            // Get all columns in each table.
+            $tableCols = $wpdb->get_results('DESCRIBE ' . $wpdb->prefix . $table);
+
+            // Loop through columns.
+            foreach($tableCols as $col){
+                // No need to find / replace on IDs.
+                if('PRI' == $col->Key){
+                    $primaryField = $col->Field;
+                    break;
+                }
+            }
+            
+            // Select all from each table.
+            $tableRows = $wpdb->get_results('SELECT * FROM ' . $wpdb->prefix . $table, ARRAY_A);
+
+            // If rows are retured.
+            if(!empty($tableRows)){
+                // Set the update flag to false.
+                $updated = FALSE;
+                // Loop through resulting rows.
+                foreach($tableRows as $row){
+                    // Loop through each cell.
+                    foreach($row as $cellKey => $cellValue){
+                        // Unserialise the cell value.
+                        $unserialisedValue = unserialize($cellValue);
+                        // If value is not successfully unserialised.
+                        if(FALSE == $unserialisedValue){ 
+                            // Set count to zero.
+                            $count = 0;
+                            // Find and replace old site url.
+                            if($cellValue = str_replace($oldSiteurl, $newSiteurl, $cellValue, $count)){
+                                // If instances of old site url being replaced
+                                // is greater than 1.
+                                if(1 <= $count){
+                                    // Add the cell to an array to be updated.
+                                    $cellValues[$cellKey] = $cellValue;
+                                    // And, set update flat to true.
+                                    $updated = TRUE;
+                                }
+                            }
+                        // If value does successfully unserialise.
+                        }else{
+                            // Pass values to recursive array replace method.
+                            $cellValue = self::_recursiveArrayReplace($oldSiteurl, $cellSiteurl, $cellValue);
+                            // Add returned data as a value of our replacement array.
+                            $cellValues[$cellKey] = serialize($cellValue); 
+                            // And, set update flat to true.
+                            $updated = TRUE;
+                        }
+                    }
+                    
+                    // If we have cells to update.
+                    if(TRUE == $updated){
+                        // Pass array of cells to $wpdb->update along with the primary key and value.
+                        $result = $wpdb->update($wpdb->prefix . $table, $cellValues, array( $primaryField => $row[$primaryField]), null, null);
+                        
+                        // Set error flag to true if update failed.
+                        if(FALSE == $result){
+                            $error = TRUE;
+                        }
+                        
+                        // Reset update flag.
+                        $updated = FALSE;
+                        // Reset cell values array
+                        $cellValues = array();
+                    }  
+    
+                }
+            // If the table is empty, skip it.
+            }else{
+                continue;
+            }
+        }
+        
+        // Check for errors and deliver message to user.
+        if(TRUE == $error){
+            echo "[?] Site url was updated, but there may have some instances missed. Please proceed with caution! \n";
+        }else{
+           echo "-- Site url successfully updated. \n";  
+        }
+        
+    }
+    
+    
+    /**
+     * Globally updates the site url across the entire database including 
+     * all serialised data.
+     *
+     * @access  private
+     * @return  void
+     * @author  moz667 AT gmail DOT com - originally posted at uk.php.net.
+     * @author  Kieran Masterton - updated to work with WpAdmin_Option::_updateSiteurlGlobal
+     */
+    
+    private static function _recursiveArrayReplace($find, $replace, $data)
+    {
+    
+        if (is_array($data)) {
+            foreach ($data as $key => $value) {
+                if (is_array($value)) {
+                    self::_recursiveArrayReplace($find, $replace, $data[$key]);
+                } else {
+                    if (is_string($value)) $data[$key] = str_replace($find, $replace, $value);
+                }
+            }
+        } else {
+            if (is_string($data)) $data = str_replace($find, $replace, $data);
+        } 
+        
+        return $data;
+    } 
 }
