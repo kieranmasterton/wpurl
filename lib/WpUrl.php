@@ -1,7 +1,7 @@
 <?php
 
 /**
- * wpadmin
+ * wpurl
  *
  * Coded to Zend's coding standards:
  * http://framework.zend.com/manual/en/coding-standard.html
@@ -393,7 +393,7 @@ EOF;
 	     * @access  private
 	     * @return  void
 	     * @author  moz667 AT gmail DOT com - originally posted at uk.php.net.
-	     * @author  Kieran Masterton - updated to work with WpAdmin_Option::_updateSiteurlGlobal
+	     * @author  Kieran Masterton - updated to work with WpUrl::_updateSiteurlGlobal
 	     */
 
 	    private static function _recursiveArrayReplace($find, $replace, $data)
