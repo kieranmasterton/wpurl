@@ -10,7 +10,7 @@ Getting Started
 
 1. Grab yourself a copy of wpurl:
 
-    git clone https://github.com/88mph/wpadmin.git
+    git clone https://github.com/88mph/wpurl.git
 
 2. Make wpurl executable:
 
