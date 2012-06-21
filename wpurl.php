@@ -39,12 +39,11 @@ if(true == is_readable('wp-config.php')){
     // Load wpdmin libs.
     require_once WPURL_LIB_PATH . '/WpUrl.php';
 
-    // Run main WpAdmin::exec() method.
+    // Run WpUrl::exec() method, pass in user input and wpconfig content.
     WpUrl::exec($argv, $wpconfig);
     
 }else{
-    die("Either this is not a WordPress document root or you do not have 
-                                        permission to administer this site. \n");
+    die("Either this is not a WordPress document root or you do not have permission to read these site files. \n");
 }
 
 ob_end_flush();
