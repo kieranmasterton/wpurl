@@ -10,9 +10,9 @@
  * File encoding: UTF8
  * File indentation: Spaces (4). No tabs
  *
- * @copyright   Copyright (c) 2011 88mph. (http://88mph.co)
+ * @copyright   Copyright (c) 2012 88mph. (http://88mph.com)
  * @license     GNU
- * @author      88mph http://88mph.co
+ * @author      88mph http://88mph.com
  */
  
 /**
@@ -66,8 +66,42 @@ class WpUrl
      */
     private static $_newUrl;
     
+	/**
+     * Array of cells to be updated.
+     *
+     * @static
+     * @access private
+     */
+	private static $_updateCellArray = array();
+	
+	/**
+     * Array of tables to be updated.
+     *
+     * @static
+     * @access private
+     */
+	private static $_wpTables = array('commentmeta', 'comments', 'links', 'options', 'postmeta', 
+		                        'posts', 'terms', 'term_relationships', 'term_taxonomy', 'usermeta',
+		                        'users');
+	
+	/**
+    * String to store current primary field.
+    *
+    * @static
+    * @access private
+    */	
+	private static $_primaryField;
+	
+	/**
+     * String to store current table name.
+     *
+     * @static
+     * @access private
+     */
+	private static $_currentTableName = array();
+
     /**
-     * Function invoked from prompt.
+     * Method invoked from prompt.
      *
      * @static
      * @access  public
@@ -86,8 +120,8 @@ class WpUrl
         self::_parseOptions($args);
 
         // Set URL values
-        $oldUrl      = self::$_oldUrl;
-        $newUrl     = self::$_newUrl;
+        $oldUrl = self::$_oldUrl;
+        $newUrl = self::$_newUrl;
        
     }
     
@@ -132,7 +166,7 @@ class WpUrl
 		
 		}else{
 			# No URL input from user, display help text.
-			self::displayHelp();
+			self::_displayHelp();
 		}
     }
 
@@ -236,6 +270,13 @@ class WpUrl
     }
 
 
+    /**
+     * Database connection.
+     *
+     * @static
+     * @access  public
+     * @return  void
+     */
 	public static function _dbConnect()
 	{
 		$mysql = mysql_connect(self::$_dbConfig['dbHost'], self::$_dbConfig['dbUser'], self::$_dbConfig['dbPassword']);
@@ -252,14 +293,22 @@ class WpUrl
      * Displays end-user help.
      *
      * @static
-     * @access  public
+     * @access  private
      * @return  string
      */
-    public static function displayHelp()
+    public static function _displayHelp()
     {
-		die('Your current WordPress site URL is: ' . self::$_oldUrl . "\nTo change the URL type 'wpurl http://example.com'\nFor more options type 'wpurl --help'\n");
+		die('Your current WordPress site URL is: ' . 
+			self::$_oldUrl . "\nTo change the URL type 'wpurl http://example.com'\nFor more options type 'wpurl --help'\n");
     }
     
+    /**
+     * Extracts string from between two deliminating strings.
+     *
+     * @static
+     * @access  private
+     * @return  string
+     */
 	private static function _extractString($string, $start, $end){
 		$pos = stripos($string, $start);
 		$str = substr($string, $pos);
@@ -271,166 +320,182 @@ class WpUrl
 	}
 	
 	/**
-	     * Globally updates the site url across the entire database including 
-	     * all serialised data.
-	     *
-	     * @access  private
-	     * @return  void
-	     * @author  Kieran Masterton (@kieranmasterton)
-	     * @author  David Coveney of Interconnect IT Ltd (UK) for original idea.
-	     */
-	    private static function _updateSiteurl()
-	    {
-	        // Ensure that we prompt the user to add a protocol prefix to their 
-	        // site name.
-	        if(!preg_match('/^http(s?):\/\//', self::$_newUrl)){
-	            die("You must prefix your site url with http:// or https:// \n");
-	        }
+     * Method that updates site url across entire db.
+     *
+     * @static
+     * @access  private
+     * @return  void
+     */
+	private static function _updateSiteurl()
+	{
+		// Check user input
+		self::_validateUserInput();
 
-	        // Check that the two site url are not identical
-	        if(self::$_oldUrl == self::$_newUrl){
-	            die("Your site url is already set to: " . self::$_newUrl . "\n");
-	        }
+		// Loop through WP tables
+		foreach(self::$_wpTables as $table){
+			self::$_currentTableName = $table;
+			// Retrieve table rows from DB.
+			$tableRows = self::_getTableData($table);
 
-	        // Array of all relervant WordPress tables.
-	        $tables = array('commentmeta', 'comments', 'links', 'options', 'postmeta', 
-	                        'posts', 'terms', 'term_relationships', 'term_taxonomy', 'usermeta',
-	                        'users');
-	
-			// Set cell counter to zero.
-			$cellValuesCount = 0;
-
-	        // Loop through tables.
-	        foreach($tables as $table){
-	            // Get all columns in each table.
-				$res = mysql_query('DESCRIBE ' . self::$_dbConfig['tablePrefix'] . $table);
-				if (!$res) {
-				   die('Database query error: ' . mysql_error());
+			if($tableRows){
+				// Loop through
+				foreach($tableRows as $tableKey => $tableValue){
+					foreach($tableValue as $cellKey => $cellValue){
+						$primaryKey = self::$_primaryField;
+						self::_parseForMatches($primaryKey, $tableValue[$primaryKey], $cellKey, $cellValue);
+					}
 				}
-				$tableCols = mysql_fetch_assoc($res);
+			}
 
-	            // Loop through columns.
-	            foreach($tableCols as $key => $value){
-	                // No need to find / replace on IDs.
-	                if('PRI' == $value){
-	                    $primaryField = $tableCols['Field'];
-	                    break;
-	                }
-	            }
+		}
 
-	            // Select all from each table.
-				$res = mysql_query('SELECT * FROM ' . self::$_dbConfig['tablePrefix'] . $table);
-				if (!$res) {
-				   die('Database query error: ' . mysql_error());
+		// Update the database from collate changes.
+		if(count(self::$_updateCellArray) > 0){
+			$count = 0;
+			foreach(self::$_updateCellArray as $table => $rows){
+				foreach($rows as $rowKey => $rowData){
+					$q = 'UPDATE ' . self::$_dbConfig['tablePrefix'] . $table . ' SET ' . $rowData['cell_name'] . " = '" . $rowData['cell_value'] . "' WHERE " . $rowData['pri_name'] . ' = ' . $rowData['pri_value'];
+					$res = mysql_query($q);
+				
+					if (!$res) {
+					   die('Database update error: ' . mysql_error());
+					}else{
+						$count++;
+					}
 				}
-				$tableRows = mysql_fetch_assoc($res);
+			}
+		}
+		
+		die('Complete: ' . $count . ' instances updated across ' . count(self::$_updateCellArray) . " tables.\n");
 	
-	            #$tableRows = $wpdb->get_results('SELECT * FROM ' . $wpdb->prefix . $table, ARRAY_A);
+	}
 
-	            // If rows are retured.
-	            if($tableRows){
-	                // Set the update flag to false.
-	                $updated = FALSE;
-	                // Loop through resulting rows.
-	                    foreach($tableRows as $cellKey => $cellValue){
-	                        // Unserialise the cell value.
-	                        $unserialisedValue = unserialize($cellValue);
-	                        // If value is not successfully unserialised.
-	                        if(FALSE == $unserialisedValue){ 
-	                            // Set count to zero.
-	                            $count = 0;
-	                            // Find and replace old site url.
-	                            if($cellValue = str_replace(self::$_oldUrl, self::$_newUrl, $cellValue, $count)){
-	                                // If instances of old site url being replaced
-	                                // is greater than 1.
-	                                if(1 <= $count){
-	                                    // Add the cell to an array to be updated.
-	                                    $cellValues[$cellKey] = $cellValue;
-	                                    // And, set update flat to true.
-	                                    $updated = TRUE;
-	                                }
-	                            }
-	                        // If value does successfully unserialise.
-	                        }else{
-	                            // Pass values to recursive array replace method.
-	                            $cellValue = self::_recursiveArrayReplace(self::$_oldUrl, $cellSiteurl, $cellValue);
-	                            // Add returned data as a value of our replacement array.
-	                            $cellValues[$cellKey] = serialize($cellValue); 
-	                            // And, set update flat to true.
-	                            $updated = TRUE;
-	                        }
-	                    }
+	/**
+     * Parses values for old site url
+     *
+     * @static
+     * @access  private
+     * @return  void
+     */
+	private static function _parseForMatches($primaryKeyName, $primaryKeyValue,$cellKey, $data){
+		// If an array has been passed in
+		if(is_array($data)){
+			// Loop through
+			foreach($data as $key => $value){
+				// And pass to same method
+				self::_parseForMatches($value);
+			}
+		}else{
+			// Attempt to unserialise
+			$unSerializedData = unserialize($data);
+			// If unsuccessful
+			if(FALSE != $unSerializedData){
+				// Then data is string for find / replace	
+				self::_findAndStoreReplacement($primaryKeyName,$primaryKeyValue,$cellKey,$unSerializedData);
+			}else{
+				self::_findAndStoreReplacement($primaryKeyName,$primaryKeyValue,$cellKey,$data);
+			}
+		}
+	}
 
-	                    // If we have cells to update.
-	                    if(TRUE == $updated){
-	                        // Pass array of cells to $wpdb->update along with the primary key and value.				
-							foreach($cellValues as $key => $value){
-							// Select all from each table.
-							$q = 'UPDATE ' . self::$_dbConfig['tablePrefix'] . $table . ' SET ' . $key . " = '" . $value . "' WHERE " . $primaryField . ' = ' . $tableRows[$primaryField];
-	
-							$res = mysql_query($q);
-							if (!$res) {
-							   die('Database update error: ' . mysql_error());
-							}
-							}
+	/**
+     * Stores the dbs, rows and cells to be updated.
+     *
+     * @static
+     * @access  private
+     * @return  void
+     */
+	private static function _findAndStoreReplacement($primaryKeyName,$primaryKeyValue,$cellKey, $data){
+		$result = self::_findReplace($data);
+		if(TRUE === $result['updated']){
+			self::$_updateCellArray[self::$_currentTableName][] = array('pri_name' => $primaryKeyName, 'pri_value' => $primaryKeyValue, 'cell_name' => $cellKey, 'cell_value' => $result['data'], 'old_value' => $data);
+		}
+	}
 
-	                        // Set error flag to true if update failed.
-	                        if(FALSE == $res){
-	                            $error = TRUE;
-	                        }
+	/**
+     * Replaces site url
+     *
+     * @static
+     * @access  private
+     * @return  array
+     */
+	private static function _findReplace($data)
+	{
+		$count = 0;
+		if(is_string($data)){
+			$data = str_replace(self::$_oldUrl, self::$_newUrl, $data, $count);
+			
+			if ($count > 0) { 
+				$return['updated'] = TRUE;
+			}else{
+				$return['updated'] = FALSE;	
+			}
 
-	                        // Reset update flag.
-	                        $updated = FALSE;
-							
-							// Update cell counter.
-							$cellValuesCount = count($cellValues) + $cellValuesCount;
-							
-	                        // Reset cell values array
-	                        $cellValues = array();
-	                    }  
+			$return['data'] = $data;
+		}else{
+			$return['data'] = $data;
+			$return['updated'] = FALSE;	
+		}
+		return $return;
+	}
 
-	                
-	            // If the table is empty, skip it.
-	            }else{
-	                continue;
-	            }
+	/**
+     * Returns table data from db.
+     *
+     * @static
+     * @access  private
+     * @return  array
+     */
+	private static function _getTableData($table)
+	{		
+		// Get all columns in each table.
+		$res = mysql_query('DESCRIBE ' . self::$_dbConfig['tablePrefix'] . $table);
+		if (!$res) {
+		   die('Database query error: ' . mysql_error());
+		}
+		$tableCols = mysql_fetch_assoc($res);
+
+	    // Loop through columns.
+	    foreach($tableCols as $key => $value){
+	        // No need to find / replace on IDs.
+	        if('PRI' == $value){
+	            self::$_primaryField = $tableCols['Field'];
+	            break;
 	        }
-
-	        // Check for errors and deliver message to user.
-	        if(TRUE == $error){
-	            echo "[?] Site url was updated, but there may have some instances missed. Please proceed with caution! \n";
-	        }else{
-	           echo "-- Site url successfully updated. " . $cellValuesCount . " instances were found and updated.\n";  
-	        }
-
 	    }
 
+	    // Select all from each table.
+		$res = mysql_query('SELECT * FROM ' . self::$_dbConfig['tablePrefix'] . $table);
+		if (!$res) {
+		   die('Database query error: ' . mysql_error());
+		}
 
-	    /**
-	     * Globally updates the site url across the entire database including 
-	     * all serialised data.
-	     *
-	     * @access  private
-	     * @return  void
-	     * @author  moz667 AT gmail DOT com - originally posted at uk.php.net.
-	     * @author  Kieran Masterton - updated to work with WpUrl::_updateSiteurlGlobal
-	     */
+		if(FALSE != $res){
+			while ($tmpTables = mysql_fetch_assoc($res)) {
+				$tableRows[] = $tmpTables;
+			}
+		}
 
-	    private static function _recursiveArrayReplace($find, $replace, $data)
-	    {
+		return $tableRows;
+	}
 
-	        if (is_array($data)) {
-	            foreach ($data as $key => $value) {
-	                if (is_array($value)) {
-	                    self::_recursiveArrayReplace($find, $replace, $data[$key]);
-	                } else {
-	                    if (is_string($value)) $data[$key] = str_replace($find, $replace, $value);
-	                }
-	            }
-	        } else {
-	            if (is_string($data)) $data = str_replace($find, $replace, $data);
-	        } 
+	/**
+     * Validates that the user has entered a correct url.
+     *
+     * @static
+     * @access  private
+     * @return  void
+     */
+	public static function _validateUserInput(){
+		// Ensure that we prompt the user to add a protocol prefix to their 
+	    // site name.
+	    if(!preg_match('/^http(s?):\/\//', self::$_newUrl)){
+	        die("You must prefix your site url with http:// or https:// \n");
+	    }
 
-	        return $data;
-	    } 
+	    // Check that the two site url are not identical
+	    if(self::$_oldUrl == self::$_newUrl){
+	        die("Your site url is already set to: " . self::$_newUrl . "\n");
+	    }
+	} 
 }
