@@ -111,7 +111,9 @@ class WpUrl
     public static function exec($args, $wpconfig)
     {
 		// Parse wpconfig and set db config details.
-		self::_setDbConfig(self::_parseWpConfig($wpconfig));
+		if(empty(self::$_dbConfig)){
+		    self::_setDbConfig(self::_parseWpConfig($wpconfig));
+        }
 		
 		// Connect to WP database
 		self::_dbConnect();
@@ -162,8 +164,32 @@ class WpUrl
 			# URL supplied by user, set URL value and prompt 
 			# for confirmation to change site URL.
 			self::_setNewUrl($args[1]);
-			self::_promptForConf();
-		
+			
+			if($args[2]){
+			    unset($args[0],$args[1]);
+    		    foreach($args as $key => $value){
+    		        $tmp = str_replace('-', '', $value);
+    		        list($cmdName,$cmdValue) = explode('=', $tmp);
+    		        $dbCreds[$cmdName] = $cmdValue;
+    		    }
+    		    if(!(isset($dbCreds['dbname'])) || !(isset($dbCreds['dbuser'])) || !(isset($dbCreds['dbpassword'])) || !(isset($dbCreds['tableprefix']))|| !(isset($dbCreds['dbhost']))){
+    		        die("You have given partial database details, please specify --dbname, --dbuser, --dbpassword, --tableprefix and --dbhost. \n");
+    		    }else{
+    		        preg_match('/^.*\_$/',$dbCreds['tableprefix'], $matches);
+    		        if(count($matches) == 0){
+    		            $dbCreds['tableprefix'] = $dbCreds['tableprefix'] . '_';
+    		        }
+    		       
+    		        $dbConfig['dbName'] =  $dbCreds['dbname'];    
+                    $dbConfig['dbUser'] =  $dbCreds['dbuser']; 
+            		$dbConfig['dbPassword'] =  $dbCreds['dbpassword']; 
+            		$dbConfig['dbHost'] =  $dbCreds['dbhost'];
+            		$dbConfig['tablePrefix'] = $dbCreds['tableprefix'];
+            		self::_setDbConfig($dbConfig);
+    		    }
+    		}
+		    
+		    self::_promptForConf();
 		}else{
 			# No URL input from user, display help text.
 			self::_displayHelp();
@@ -178,7 +204,7 @@ class WpUrl
      * @access  private
      * @return  void
      */
-    private static function _setdbConfig($dbConfig)
+    private static function _setDbConfig($dbConfig)
     {
 		if(is_array($dbConfig)){
 			self::$_dbConfig = $dbConfig;

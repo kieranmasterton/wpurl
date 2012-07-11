@@ -37,7 +37,7 @@ $ wpurl http://newsiteurl.com
 
 Change the current site URL if you have customised your wp-config.php:
 
-$ wpurl http://newsiteurl.com --dbname="example_db" --dbuser="example_user" --dbpassword="letmein"
+$ wpurl http://newsiteurl.com --dbname=example_db --dbuser=example_user --dbpassword=letmein --dbhost=localhost --tableprefix=wp_
 
 License
 -------
