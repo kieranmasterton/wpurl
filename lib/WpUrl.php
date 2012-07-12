@@ -307,7 +307,7 @@ class WpUrl
 	{
 		$mysql = mysql_connect(self::$_dbConfig['dbHost'], self::$_dbConfig['dbUser'], self::$_dbConfig['dbPassword']);
 		if (!$mysql) {
-		    die("[x] Sorry, we tried to guess your database config options from the contents of wp-config. It looks like we failed :(\nTry using our command line options to configure wpurl directly, type 'wpurl --help' for more info.\n");
+		    die("[x] Sorry, we tried to guess your database config options from the contents of wp-config. It looks like we failed :(\nTry using our command line options to configure wpurl directly.\n");
 		}else{
 			mysql_select_db(self::$_dbConfig['dbName']);
 			self::_setDbCon($mysql);
@@ -325,7 +325,7 @@ class WpUrl
     public static function _displayHelp()
     {
 		die('Your current WordPress site URL is: ' . 
-			self::$_oldUrl . "\nTo change the URL type 'wpurl http://example.com'\nFor more options type 'wpurl --help'\n");
+			self::$_oldUrl . "\nTo change the URL type 'wpurl http://example.com' \n");
     }
     
     /**
