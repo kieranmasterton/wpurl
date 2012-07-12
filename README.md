@@ -6,7 +6,7 @@ Welcome to wpurl
 
 wpurl is a command line tool for updating the WordPress site URL.
 
-Version: 0.0.1
+Version: 0.1
 
 Getting Started
 ---------------

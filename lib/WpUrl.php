@@ -19,7 +19,7 @@
  * The WpUrl class provides methods for parsing user input, searching both serialized and unserialized data 
  * and replacing old site urls instances with new site url.
  *
- * @since   0.0.1
+ * @since   0.1
  * @author  Kieran Masterton (@kieranmasterton)
  */
 class WpUrl

@@ -20,7 +20,7 @@
  * wpurl is a PHP script implementing a command line shell for WordPress.
  *
  * @requires PHP CLI 5.2.0, or newer.
- * @since 0.0.1
+ * @since 0.1
  */
  
 // Start output buffering to stop WordPress from spitting out its usual output.
