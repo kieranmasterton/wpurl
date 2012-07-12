@@ -1,3 +1,6 @@
+NOTE: This is still in testing please use with extreme caution!
+------------------
+
 Welcome to wpurl
 ------------------
 
