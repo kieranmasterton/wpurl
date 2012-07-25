@@ -380,7 +380,7 @@ class WpUrl
 			$count = 0;
 			foreach(self::$_updateCellArray as $table => $rows){
 				foreach($rows as $rowKey => $rowData){
-					$q = 'UPDATE ' . self::$_dbConfig['tablePrefix'] . $table . ' SET ' . $rowData['cell_name'] . " = '" . $rowData['cell_value'] . "' WHERE " . $rowData['pri_name'] . ' = ' . $rowData['pri_value'];
+					$q = 'UPDATE ' . self::$_dbConfig['tablePrefix'] . $table . ' SET ' . $rowData['cell_name'] . " = '" . mysql_real_escape_string($rowData['cell_value']) . "' WHERE " . $rowData['pri_name'] . ' = ' . $rowData['pri_value'];
 					$res = mysql_query($q);
 				
 					if (!$res) {
@@ -392,7 +392,7 @@ class WpUrl
 			}
 		}
 		
-		die('Complete: ' . $count . ' instances updated across ' . count(self::$_updateCellArray) . " tables.\n");
+		die('Complete: ' . $count . ' instances updated across ' . count(self::$_updateCellArray) . " table(s).\n");
 	
 	}
 
@@ -413,7 +413,7 @@ class WpUrl
 			}
 		}else{
 			// Attempt to unserialise
-			$unSerializedData = unserialize($data);
+			$unSerializedData = @unserialize($data);
 			// If unsuccessful
 			if(FALSE != $unSerializedData){
 				// Then data is string for find / replace	
